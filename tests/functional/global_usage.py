@@ -7,4 +7,4 @@ def global_constant_in_loop():
 
     total = MY_GLOBAL_CONSTANT_A
     for i in range(10_000):
-        total += i * MY_GLOBAL_CONSTANT_C
+        total += i * MY_GLOBAL_CONSTANT_C # [loop-invariant-global-usage]
