@@ -28,7 +28,7 @@ class ForLoopChecker(BaseChecker):
         )
     }
 
-    @checker_utils.check_messages("unnecessary-list-cast")
+    @checker_utils.check_messages("unnecessary-list-cast", "incorrect-dictionary-iterator")
     def visit_for(self, node: nodes.For) -> None:
         """Visit for loops."""
         if not node.iter:
