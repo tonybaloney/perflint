@@ -1,3 +1,6 @@
+from re import M
+
+
 def simple_static_list():
     """Test warning for casting a list to a list."""
     items = [1, 2, 3]
@@ -15,3 +18,16 @@ def simple_static_set():
     items = {1, 2, 3}
     for i in list(items): # [unnecessary-list-cast]
         print(i)
+
+def simple_dict_keys():
+    """Check that dictionary .items() is being used correctly. """
+    fruit = {
+        'a': 'Apple',
+        'b': 'Banana',
+    }
+
+    for _, value in fruit.items(): # [incorrect-dictionary-iterator]
+        print(value)
+
+    for key, _ in fruit.items(): # [incorrect-dictionary-iterator]
+        print(key)

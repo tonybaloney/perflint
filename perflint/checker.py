@@ -16,21 +16,17 @@ class ForLoopChecker(BaseChecker):
     name = 'for-loop-checker'
     priority = -1
     msgs = {
-        'W0001': (
+        'W8901': (
             'Unnecessary using of list() on an already iterable type.',
             'unnecessary-list-cast',
-            'All constants returned in a function should be unique.'
+            'Eager iteration of an iterable is inefficient.'
         ),
+        'W8902': (
+            'Incorrect iterator method for dictionary, use .keys() or .values().',
+            'incorrect-dictionary-iterator',
+            'Use keys() or values() instead of items() when not unpacking both.'
+        )
     }
-    options = (
-        (
-            'ignore-ints',
-            {
-                'default': False, 'type': 'yn', 'metavar' : '<y or n>',
-                'help': 'Allow returning non-unique integers',
-            }
-        ),
-    )
 
     @checker_utils.check_messages("unnecessary-list-cast")
     def visit_for(self, node: nodes.For) -> None:
@@ -41,17 +37,33 @@ class ForLoopChecker(BaseChecker):
             return
         if not node.iter.func:
             return
-        if not isinstance(node.iter.func, nodes.Name):
-            return
-        if not node.iter.args:
-            return
-        if node.iter.func.name != 'list':
-            return
 
-        # Work out the value
-        inferred_values = list(infer_name(node.iter.args[0]))
-        if len(inferred_values) != 1:
-            return  # can't have >1 or 0 assigned values
-        inferred_value = inferred_values[0]
-        if isinstance(inferred_value, iterable_types):
-            self.add_message("unnecessary-list-cast", node=node.iter)
+        # We have multiple types of checkers, function call, or method calls
+        if isinstance(node.iter.func, nodes.Name):
+            if not node.iter.args:
+                return
+            if node.iter.func.name != 'list':
+                return
+
+            # Work out the value
+            inferred_values = list(infer_name(node.iter.args[0]))
+            if len(inferred_values) != 1:
+                return  # can't have >1 or 0 assigned values
+            inferred_value = inferred_values[0]
+            if isinstance(inferred_value, iterable_types):
+                self.add_message("unnecessary-list-cast", node=node.iter)
+    
+        elif isinstance(node.iter.func, nodes.Attribute):
+            if node.iter.args:  # items() never has a list of arguments!
+                return
+            if node.iter.func.attrname != 'items':
+                return
+            if not isinstance(node.target, nodes.Tuple):
+                return
+            if not len(node.target.elts) == 2:
+                return
+            if any(el.name == '_' for el in node.target.elts if isinstance(el, nodes.AssignName)):
+                self.add_message("incorrect-dictionary-iterator", node=node.iter)
+
+        else:
+            return
