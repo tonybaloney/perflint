@@ -1,10 +1,10 @@
 import astroid
-import perflint.checker
+import perflint.for_loop_checker
 import pylint.testutils
 
 
 class TestUniqueReturnChecker(pylint.testutils.CheckerTestCase):
-    CHECKER_CLASS = perflint.checker.ForLoopChecker
+    CHECKER_CLASS = perflint.for_loop_checker.ForLoopChecker
 
 
     def test_bad_list_cast(self):
