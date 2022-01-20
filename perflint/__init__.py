@@ -1,7 +1,7 @@
 """Pylint extension with performance anti-patterns"""
 from typing import TYPE_CHECKING
 
-from perflint.checker import ForLoopChecker
+from perflint.for_loop_checker import ForLoopChecker, LoopInvariantChecker
 
 if TYPE_CHECKING:
     from pylint.lint import PyLinter
@@ -16,3 +16,4 @@ def register(linter: "PyLinter") -> None:
     """
 
     linter.register_checker(ForLoopChecker(linter))
+    linter.register_checker(LoopInvariantChecker(linter))

@@ -1,5 +1,3 @@
-from re import M
-
 
 def simple_static_list():
     """Test warning for casting a list to a list."""
