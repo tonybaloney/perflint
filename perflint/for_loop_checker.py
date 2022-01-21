@@ -123,16 +123,23 @@ class LoopInvariantChecker(BaseChecker):
         used_names = self._loop_names.pop()
         for name_node in used_names:
             if name_node.name not in assigned_names:
-                if node.parent != node:
+                cur_node = name_node.parent
+                invariant_node = None
+                while cur_node != node:
                     # Walk down parent for variant components.
                     is_variant = False
-                    for child in get_children_recursive(name_node.parent):
+                    for child in get_children_recursive(cur_node):
                         if isinstance(child, nodes.Name) and child.name in assigned_names:
                             is_variant = True
                     if not is_variant:
-                        self.add_message("loop-invariant-statement", node=name_node.parent)
-                else:
-                    self.add_message("loop-invariant-statement", node=name_node)
+                        invariant_node = cur_node
+                        cur_node = cur_node.parent
+                    else:
+                        break
+
+                if invariant_node:
+                    self.add_message("loop-invariant-statement", node=invariant_node)
+
 
     def visit_assign(self, node: nodes.Assign) -> None:
         """Track assignments in loops."""

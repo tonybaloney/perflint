@@ -16,7 +16,7 @@ def loop_invariant_statement_more_complex():
     for j in range(10_000):
         # x is never changed in this loop scope,
         # so this expression should be evaluated outside
-        print(len(x) * i + j)
+        print(len(x) * i + j) # [loop-invariant-statement]
 
 
 def loop_invariant_statement_method_side_effect():
@@ -27,6 +27,23 @@ def loop_invariant_statement_method_side_effect():
     for j in range(10_000):
         print(len(x) * i + j)
         x.clear()  # x changes as a side-effect
+
+
+def loop_invariant_branching():
+    """Ensure node is walked up to find a loop-invariant branch"""
+    x = [1,2,3,4] 
+    i = 6
+
+    for j in range(10_000):
+        # Marks entire branch
+        if len(x) > 2:    # [loop-invariant-statement]
+            print(x * i)  # [loop-invariant-statement]
+
+    # Marks comparator, but not print
+    for j in range(10_000):
+        if len(x) > 2:   # [loop-invariant-statement]
+            print(x * j) # [loop-invariant-statement]
+
 
 
 def loop_invariant_statement_side_effect_function():

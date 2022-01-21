@@ -6,7 +6,7 @@ from perflint.for_loop_checker import ForLoopChecker, LoopInvariantChecker
 if TYPE_CHECKING:
     from pylint.lint import PyLinter
 
-__version__ = "0.0.2"
+__version__ = "0.0.4"
 
 
 def register(linter: "PyLinter") -> None:
