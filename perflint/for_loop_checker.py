@@ -7,6 +7,12 @@ from pylint.interfaces import IAstroidChecker
 
 iterable_types = (nodes.Tuple, nodes.List, nodes.Set, )
 
+def get_children_recursive(node: nodes.NodeNG):
+    for child in node.get_children():
+        yield child
+        yield from get_children_recursive(child)
+
+
 class ForLoopChecker(BaseChecker):
     """
     Check for poor for-loop usage.
@@ -118,7 +124,13 @@ class LoopInvariantChecker(BaseChecker):
         for name_node in used_names:
             if name_node.name not in assigned_names:
                 if node.parent != node:
-                    self.add_message("loop-invariant-statement", node=name_node.parent)
+                    # Walk down parent for variant components.
+                    is_variant = False
+                    for child in get_children_recursive(name_node.parent):
+                        if isinstance(child, nodes.Name) and child.name in assigned_names:
+                            is_variant = True
+                    if not is_variant:
+                        self.add_message("loop-invariant-statement", node=name_node.parent)
                 else:
                     self.add_message("loop-invariant-statement", node=name_node)
 

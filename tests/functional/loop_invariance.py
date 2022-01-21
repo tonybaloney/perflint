@@ -21,13 +21,13 @@ def loop_invariant_statement_more_complex():
 
 def loop_invariant_statement_method_side_effect():
     """Catch basic loop-invariant function call."""
-    x = [1,2,3,4]
+    x = [1,2,3,4] 
     i = 6
 
     for j in range(10_000):
         print(len(x) * i + j)
         x.clear()  # x changes as a side-effect
- 
+
 
 def loop_invariant_statement_side_effect_function():
     """Catch basic loop-invariant function call."""
@@ -46,3 +46,9 @@ def loop_invariant_statement_side_effect_function():
 
     len = _len
 
+def loop_invariant_statement_but_name():
+    """Catch basic loop-invariant function call."""
+    i = 6
+
+    for _ in range(10_000):
+        i
