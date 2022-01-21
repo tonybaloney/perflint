@@ -1,3 +1,4 @@
+from typing import List, Set
 from astroid import nodes
 from astroid.inference import infer_name
 from pylint.checkers import BaseChecker
@@ -95,19 +96,49 @@ class LoopInvariantChecker(BaseChecker):
     def __init__(self, linter=None):
         super().__init__(linter)
         self._loop_level = 0
+        self._loop_assignments: List[Set[str]] = []
+        self._loop_names: List[List[nodes.Name]] = []
 
     @checker_utils.check_messages("loop-invariant-statement")
     def visit_for(self, node: nodes.For) -> None:
         """Visit for loop bodies."""
         self._loop_level += 1
+        if isinstance(node.target, nodes.Tuple):
+            self._loop_assignments.append(set(el.name for el in node.target.elts))
+        elif isinstance(node.target, nodes.AssignName):
+            self._loop_assignments.append({node.target.name})
+        self._loop_names.append([])
 
+    @checker_utils.check_messages("loop-invariant-statement")
     def leave_for(self, node: nodes.For) -> None:
         """Drop loop level."""
         self._loop_level -= 1
+        assigned_names = self._loop_assignments.pop()
+        used_names = self._loop_names.pop()
+        for name_node in used_names:
+            if name_node.name not in assigned_names:
+                if node.parent != node:
+                    self.add_message("loop-invariant-statement", node=name_node.parent)
+                else:
+                    self.add_message("loop-invariant-statement", node=name_node)
+
+    def visit_assign(self, node: nodes.Assign) -> None:
+        """Track assignments in loops."""
+        # we don't handle multiple assignment nor slice assignment
+        if not self._loop_assignments:
+            return # Skip when empty
+
+        target = node.targets[0]
+        if isinstance(target, nodes.AssignName):
+            self._loop_assignments[-1].add(target.name)
 
     @checker_utils.check_messages("loop-invariant-global-usage")
     def visit_name(self, node: nodes.Name) -> None:
         """Look for global names"""
+        if self._loop_names:
+            if not checker_utils.is_builtin(node.name) and node.name != "self":
+                self._loop_names[-1].append(node)
+
         if checker_utils.is_builtin(node.name):
             return
         scope, stmts = node.lookup(node.name)
