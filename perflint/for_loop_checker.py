@@ -147,3 +147,12 @@ class LoopInvariantChecker(BaseChecker):
         if node.name in scope.globals:
             if self._loop_level > 0:
                 self.add_message("loop-invariant-global-usage", node=node)
+
+    def visit_call(self, node: nodes.Call) -> None:
+        """Look for method calls."""
+        if not isinstance(node.func, nodes.Attribute):
+            return
+        if not self._loop_assignments:
+            return # Skip when empty
+        if isinstance(node.func.expr, nodes.Name):
+            self._loop_assignments[-1].add(node.func.expr.name)

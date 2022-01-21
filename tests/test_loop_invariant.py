@@ -42,7 +42,7 @@ class TestUniqueReturnChecker(pylint.testutils.CheckerTestCase):
                 items.clear()
         """)
 
-        with self.assertAddedMessage("loop-invariant-statement"):
+        with self.assertNoMessages():
             self.walk(test_node)
 
     def test_global_in_for_loop(self):
