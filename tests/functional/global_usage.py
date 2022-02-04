@@ -18,3 +18,10 @@ def global_variable_in_loop():
     for i in range(10_000):
         MY_GLOBAL_VARIABLE += total
         total += i
+
+def recursive_example(x):
+    for i in range(100):
+        recursive_example(i)
+
+    for i in range(100):
+        global_constant_in_loop()

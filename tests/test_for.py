@@ -1,11 +1,11 @@
 import astroid
 import perflint.for_loop_checker
-import pylint.testutils
+
+from base import BaseCheckerTestCase
 
 
-class TestUniqueReturnChecker(pylint.testutils.CheckerTestCase):
+class TestUniqueReturnChecker(BaseCheckerTestCase):
     CHECKER_CLASS = perflint.for_loop_checker.ForLoopChecker
-
 
     def test_bad_list_cast(self):
         for_node = astroid.extract_node("""
@@ -16,7 +16,7 @@ class TestUniqueReturnChecker(pylint.testutils.CheckerTestCase):
                 pass
         """)
 
-        with self.assertAddsMessages("unnecessary-list-cast"):
+        with self.assertAddedMessage("unnecessary-list-cast"):
             self.checker.visit_for(for_node)
 
     def test_bad_dict_usage_values(self):
@@ -28,7 +28,7 @@ class TestUniqueReturnChecker(pylint.testutils.CheckerTestCase):
                 pass
         """)
 
-        with self.assertAddsMessages("incorrect-dictionary-iterator"):
+        with self.assertAddedMessage("incorrect-dictionary-iterator"):
             self.checker.visit_for(for_node)
 
     def test_bad_dict_usage_keys(self):
@@ -40,5 +40,5 @@ class TestUniqueReturnChecker(pylint.testutils.CheckerTestCase):
                 pass
         """)
 
-        with self.assertAddsMessages("incorrect-dictionary-iterator"):
+        with self.assertAddedMessage("incorrect-dictionary-iterator"):
             self.checker.visit_for(for_node)

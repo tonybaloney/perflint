@@ -1,23 +1,10 @@
 import astroid
 import perflint.for_loop_checker
-import pylint.testutils
-import contextlib
+from base import BaseCheckerTestCase
 
 
-class TestUniqueReturnChecker(pylint.testutils.CheckerTestCase):
+class TestUniqueReturnChecker(BaseCheckerTestCase):
     CHECKER_CLASS = perflint.for_loop_checker.LoopInvariantChecker
-
-
-    @contextlib.contextmanager
-    def assertAddedMessage(self, message):
-        yield
-        got = [msg.msg_id for msg in self.linter.release_messages()]
-        got_str = "\n".join(repr(m) for m in got)
-        msg = (
-            "Expected messages did not match actual.\n"
-            f"Got:\n{got_str}\n"
-        )
-        assert message in got, msg
 
     def test_basic_loop_invariant(self):
         test_node = astroid.extract_node("""

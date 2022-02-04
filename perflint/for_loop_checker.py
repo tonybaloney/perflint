@@ -8,6 +8,7 @@ from pylint.interfaces import IAstroidChecker
 iterable_types = (nodes.Tuple, nodes.List, nodes.Set, )
 
 def get_children_recursive(node: nodes.NodeNG):
+    """Get children of a node."""
     for child in node.get_children():
         yield child
         yield from get_children_recursive(child)
@@ -29,9 +30,9 @@ class ForLoopChecker(BaseChecker):
             'Eager iteration of an iterable is inefficient.'
         ),
         'W8102': (
-            'Incorrect iterator method for dictionary, use .keys() or .values().',
+            'Incorrect iterator method for dictionary, use %s.',
             'incorrect-dictionary-iterator',
-            'Use keys() or values() instead of items() when not unpacking both.'
+            'Incorrect use of .items() when not unpacking key and value.'
         )
     }
 
@@ -69,8 +70,10 @@ class ForLoopChecker(BaseChecker):
                 return
             if not len(node.target.elts) == 2:
                 return
-            if any(el.name == '_' for el in node.target.elts if isinstance(el, nodes.AssignName)):
-                self.add_message("incorrect-dictionary-iterator", node=node.iter)
+            if isinstance(node.target.elts[0], nodes.AssignName) and node.target.elts[0].name == '_':
+                self.add_message("incorrect-dictionary-iterator", node=node.iter, args=('values()', ))
+            if isinstance(node.target.elts[1], nodes.AssignName) and node.target.elts[1].name == '_':
+                self.add_message("incorrect-dictionary-iterator", node=node.iter, args=('keys()', ))
 
         else:
             return

@@ -4,7 +4,9 @@
     "python.linting.enabled": true,
     "python.linting.pylintArgs": [
         "--load-plugins",
-        "perflint"
+        "perflint",
+        "--rcfile",
+        "${workspaceFolder}/.pylintrc"
     ],
     "python.testing.pytestArgs": [
         "tests"
