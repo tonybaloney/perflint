@@ -166,7 +166,7 @@ class LoopInvariantChecker(BaseChecker):
         scope, stmts = node.lookup(node.name)
         if not isinstance(scope, nodes.Module):
             return
-        if node.name in scope.globals:
+        if node.name in scope.globals and isinstance(scope.globals[node.name], nodes.AssignName):
             if self._loop_level > 0:
                 self.add_message("loop-invariant-global-usage", node=node)
 
