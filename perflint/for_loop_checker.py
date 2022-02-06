@@ -1,4 +1,4 @@
-from typing import List, Set
+from typing import List, Set, Union
 from astroid import nodes
 from astroid.inference import infer_name
 from pylint.checkers import BaseChecker
@@ -119,7 +119,20 @@ class LoopInvariantChecker(BaseChecker):
         self._loop_names.append([])
 
     @checker_utils.check_messages("loop-invariant-statement")
+    def visit_while(self, node: nodes.While) -> None:
+        """Visit while loop bodies."""
+        self._loop_level += 1
+        self._loop_names.append([])
+
+    @checker_utils.check_messages("loop-invariant-statement")
     def leave_for(self, node: nodes.For) -> None:
+        self._leave_loop(node)
+
+    @checker_utils.check_messages("loop-invariant-statement")
+    def leave_while(self, node: nodes.While) -> None:
+        self._leave_loop(node)
+
+    def _leave_loop(self, node: Union[nodes.For, nodes.While]) -> None:
         """Drop loop level."""
         self._loop_level -= 1
         assigned_names = self._loop_assignments.pop()
