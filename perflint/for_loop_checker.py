@@ -91,7 +91,7 @@ class LoopInvariantChecker(BaseChecker):
     priority = -1
     msgs = {
         'W8201': (
-            'Consider moving this statement outside of the for-loop.',
+            'Consider moving this statement outside of the loop.',
             'loop-invariant-statement',
             'Eager iteration of an iterable is inefficient.'
         ),
@@ -107,6 +107,7 @@ class LoopInvariantChecker(BaseChecker):
         self._loop_level = 0
         self._loop_assignments: List[Set[str]] = []
         self._loop_names: List[List[nodes.Name]] = []
+        self._ignore: List[nodes.NodeNG] = []
 
     @checker_utils.check_messages("loop-invariant-statement")
     def visit_for(self, node: nodes.For) -> None:
@@ -124,9 +125,7 @@ class LoopInvariantChecker(BaseChecker):
         self._loop_level += 1
         self._loop_names.append([])
         self._loop_assignments.append(set())
-
-
-
+        self._ignore.append(node.test)
 
     @checker_utils.check_messages("loop-invariant-statement")
     def leave_for(self, node: nodes.For) -> None:
@@ -157,7 +156,7 @@ class LoopInvariantChecker(BaseChecker):
                     else:
                         break
 
-                if invariant_node:
+                if invariant_node and invariant_node not in self._ignore:
                     self.add_message("loop-invariant-statement", node=invariant_node)
 
 
@@ -170,6 +169,15 @@ class LoopInvariantChecker(BaseChecker):
         target = node.targets[0]
         if isinstance(target, nodes.AssignName):
             self._loop_assignments[-1].add(target.name)
+
+    def visit_augassign(self, node: nodes.AugAssign) -> None:
+        """Track assignments in loops."""
+        # we don't handle multiple assignment nor slice assignment
+        if not self._loop_assignments:
+            return # Skip when empty
+
+        if isinstance(node.target, nodes.AssignName):
+            self._loop_assignments[-1].add(node.target.name)
 
     @checker_utils.check_messages("loop-invariant-global-usage")
     def visit_name(self, node: nodes.Name) -> None:

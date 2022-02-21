@@ -31,6 +31,20 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
         with self.assertAddedMessage("loop-invariant-statement"):
             self.walk(test_node)
 
+    def test_basic_loop_variant_while(self):
+        test_node = astroid.extract_node("""
+        def test(): #@
+            items = (1,2,3,4)
+            i = 0
+            while i < len(items):
+                i += 1
+                print(i)
+        """)
+
+        with self.assertAddedMessage("loop-invariant-statement"):
+            self.walk(test_node)
+
+
 
     def test_basic_loop_variant_by_method(self):
         test_node = astroid.extract_node("""
