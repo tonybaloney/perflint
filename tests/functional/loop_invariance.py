@@ -1,3 +1,6 @@
+def foo(x):
+    pass
+
 def loop_invariant_statement():
     """Catch basic loop-invariant function call."""
     x = (1,2,3,4)
@@ -5,7 +8,7 @@ def loop_invariant_statement():
     for i in range(10_000):
         # x is never changed in this loop scope,
         # so this expression should be evaluated outside
-        print(len(x) * i)
+        print(len(x) * i)  # [loop-invariant-statement]
 
 
 def loop_invariant_statement_more_complex():
@@ -31,7 +34,7 @@ def loop_invariant_statement_method_side_effect():
 
 def loop_invariant_branching():
     """Ensure node is walked up to find a loop-invariant branch"""
-    x = [1,2,3,4] 
+    x = [1,2,3,4]
     i = 6
 
     for j in range(10_000):
@@ -79,7 +82,8 @@ def loop_invariant_statement_while():
         i += 1
         # x is never changed in this loop scope,
         # so this expression should be evaluated outside
-        print(len(x) * i)
+        print(len(x) * i) # [loop-invariant-statement]
+        foo(x=x) # [loop-invariant-statement]
 
 
 def loop_invariant_statement_more_complex_while():
@@ -139,7 +143,7 @@ def loop_invariant_statement_side_effect_function_while():
         j += 1
         # x is never changed in this loop scope,
         # so this expression should be evaluated outside
-        print(len(x) + j)
+        print(len(x) + j)  # [loop-invariant-statement]
 
     len = _len
 
@@ -148,4 +152,4 @@ def loop_invariant_statement_but_name_while():
     i = 6
 
     for _ in range(10_000):
-        i
+        i  # [loop-invariant-statement]

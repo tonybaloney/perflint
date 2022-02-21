@@ -151,7 +151,7 @@ class LoopInvariantChecker(BaseChecker):
                     for child in get_children_recursive(cur_node):
                         if isinstance(child, nodes.Name) and child.name in assigned_names:
                             is_variant = True
-                    if not is_variant:
+                    if not is_variant and not isinstance(cur_node, nodes.Keyword):
                         invariant_node = cur_node
                         cur_node = cur_node.parent
                     else:
