@@ -123,6 +123,10 @@ class LoopInvariantChecker(BaseChecker):
         """Visit while loop bodies."""
         self._loop_level += 1
         self._loop_names.append([])
+        self._loop_assignments.append(set())
+
+
+
 
     @checker_utils.check_messages("loop-invariant-statement")
     def leave_for(self, node: nodes.For) -> None:
