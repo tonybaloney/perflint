@@ -91,14 +91,14 @@ class LoopInvariantChecker(BaseChecker):
     priority = -1
     msgs = {
         'W8201': (
-            'Consider moving this statement outside of the loop.',
+            'Consider moving this expression outside of the loop.',
             'loop-invariant-statement',
-            'Eager iteration of an iterable is inefficient.'
+            'None of the variables referred to in this expression change within the loop.'
         ),
         'W8202': (
             'Lookups of global names within a loop is inefficient, copy to a local variable outside of the loop first.',
             'loop-invariant-global-usage',
-            'Eager iteration of an iterable is inefficient.'
+            'Global name lookups in Python are slower than local names.'
         ),
     }
 
@@ -118,6 +118,7 @@ class LoopInvariantChecker(BaseChecker):
         elif isinstance(node.target, nodes.AssignName):
             self._loop_assignments.append({node.target.name})
         self._loop_names.append([])
+        self._ignore.append(node.iter)
 
     @checker_utils.check_messages("loop-invariant-statement")
     def visit_while(self, node: nodes.While) -> None:
