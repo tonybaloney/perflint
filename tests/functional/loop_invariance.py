@@ -83,6 +83,7 @@ def loop_invariant_statement_while():
         # x is never changed in this loop scope,
         # so this expression should be evaluated outside
         print(len(x) * i) # [loop-invariant-statement]
+        y = x[0] + x[1] # [loop-invariant-statement]
         foo(x=x) # [loop-invariant-statement]
 
 

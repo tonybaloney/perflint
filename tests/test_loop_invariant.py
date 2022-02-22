@@ -83,5 +83,5 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
                 glbl
         """)
 
-        with self.assertAddedMessage("loop-invariant-statement"):
+        with self.assertAddedMessage("loop-invariant-global-usage"):
             self.walk(test_func)

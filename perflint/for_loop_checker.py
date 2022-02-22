@@ -100,6 +100,11 @@ class LoopInvariantChecker(BaseChecker):
             'loop-invariant-global-usage',
             'Global name lookups in Python are slower than local names.'
         ),
+        'R8203': (
+            'Try..except blocks have a significant overhead. Avoid using them inside a loop.',
+            'loop-try-except-usage',
+            'Avoid using try..except within a loop.'
+        ),
     }
 
     def __init__(self, linter=None):
@@ -189,10 +194,10 @@ class LoopInvariantChecker(BaseChecker):
 
         if checker_utils.is_builtin(node.name):
             return
-        scope, stmts = node.lookup(node.name)
+        scope, _ = node.lookup(node.name)
         if not isinstance(scope, nodes.Module):
             return
-        if node.name in scope.globals and isinstance(scope.globals[node.name], nodes.AssignName):
+        if node.name in scope.globals and len(scope.globals[node.name]) > 0 and isinstance(scope.globals[node.name][0], nodes.AssignName):
             if self._loop_level > 0:
                 self.add_message("loop-invariant-global-usage", node=node)
 
@@ -204,3 +209,8 @@ class LoopInvariantChecker(BaseChecker):
             return # Skip when empty
         if isinstance(node.func.expr, nodes.Name):
             self._loop_assignments[-1].add(node.func.expr.name)
+
+    @checker_utils.check_messages('loop-try-except-usage')
+    def visit_tryexcept(self, node: nodes.TryExcept) -> None:
+        if self._loop_level > 0:
+            self.add_message("loop-try-except-usage", node=node)
