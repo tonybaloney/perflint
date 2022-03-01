@@ -1,11 +1,12 @@
 from typing import List, Set, Union
 from astroid import nodes
-from astroid.inference import infer_name
+from astroid.helpers import safe_infer
 from pylint.checkers import BaseChecker
 from pylint.checkers import utils as checker_utils
 from pylint.interfaces import IAstroidChecker
 
 iterable_types = (nodes.Tuple, nodes.List, nodes.Set, )
+iterable_type_names = ("tuple", "list", "set", )
 
 def get_children_recursive(node: nodes.NodeNG):
     """Get children of a node."""
@@ -13,6 +14,23 @@ def get_children_recursive(node: nodes.NodeNG):
         yield child
         yield from get_children_recursive(child)
 
+
+def local_type(name: nodes.Name) -> Union[None, nodes.Name]:
+    if name.name in name.frame().locals:
+        vals = name.frame().locals[name.name]
+        if len(vals) > 0:
+            assigned = vals[0].assign_type()
+            if isinstance(assigned, nodes.Arguments):
+                for annotation, arg in zip(assigned.annotations, assigned.arguments):
+                    if arg.name == name.name:
+                        if isinstance(annotation, nodes.Name):
+                            return annotation
+                        elif isinstance(annotation, nodes.Subscript) and isinstance(annotation.value, nodes.Name):
+                            return annotation.value
+                        else:
+                            return None
+    else:
+        return
 
 class ForLoopChecker(BaseChecker):
     """
@@ -53,13 +71,14 @@ class ForLoopChecker(BaseChecker):
             if node.iter.func.name != 'list':
                 return
 
-            # Work out the value
-            inferred_values = list(infer_name(node.iter.args[0]))
-            if len(inferred_values) != 1:
-                return  # can't have >1 or 0 assigned values
-            inferred_value = inferred_values[0]
-            if isinstance(inferred_value, iterable_types):
-                self.add_message("unnecessary-list-cast", node=node.iter)
+            inferred_value = safe_infer(node.iter.args[0])
+            if inferred_value:
+                if isinstance(inferred_value, iterable_types):
+                    self.add_message("unnecessary-list-cast", node=node.iter)
+            else:
+                loc = local_type(node.iter.args[0])
+                if loc and loc.name.lower() in iterable_type_names:
+                    self.add_message("unnecessary-list-cast", node=node.iter)
 
         elif isinstance(node.iter.func, nodes.Attribute):
             if node.iter.args:  # items() never has a list of arguments!
@@ -104,6 +123,11 @@ class LoopInvariantChecker(BaseChecker):
             'Try..except blocks have a significant overhead. Avoid using them inside a loop.',
             'loop-try-except-usage',
             'Avoid using try..except within a loop.'
+        ),
+        'W8204': (
+            'Looped slicing of bytes objects is inefficient. Use a memoryview() instead',
+            'memoryview-over-bytes',
+            'Avoid using byte slicing in loops.'
         ),
     }
 
@@ -214,3 +238,15 @@ class LoopInvariantChecker(BaseChecker):
     def visit_tryexcept(self, node: nodes.TryExcept) -> None:
         if self._loop_level > 0:
             self.add_message("loop-try-except-usage", node=node)
+
+    @checker_utils.check_messages('memoryview-over-bytes')
+    def visit_subscript(self, node: nodes.Subscript) -> None:
+        if self._loop_level == 0:
+            return
+        inferred_value = safe_infer(node.value)
+        if not inferred_value:
+            inferred_value = local_type(node.value)
+            if isinstance(inferred_value, nodes.Name) and inferred_value.name == 'bytes':
+                self.add_message("memoryview-over-bytes", node=node)
+        if isinstance(inferred_value, nodes.Const) and isinstance(inferred_value.value, bytes):
+            self.add_message("memoryview-over-bytes", node=node)

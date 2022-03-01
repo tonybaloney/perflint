@@ -19,6 +19,16 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
         with self.assertAddedMessage("unnecessary-list-cast"):
             self.checker.visit_for(for_node)
 
+    def test_bad_list_cast_typed(self):
+        for_node = astroid.extract_node("""
+        def test(items: List[int]):
+            for item in list(items): #@
+                pass
+        """)
+
+        with self.assertAddedMessage("unnecessary-list-cast"):
+            self.checker.visit_for(for_node)
+
     def test_bad_dict_usage_values(self):
         for_node = astroid.extract_node("""
         def test():

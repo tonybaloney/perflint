@@ -85,3 +85,26 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
 
         with self.assertAddedMessage("loop-invariant-global-usage"):
             self.walk(test_func)
+
+    def test_byte_slice(self):
+        test_func = astroid.extract_node("""
+        def test(): #@
+            word = b'word'
+
+            for i in range(10):
+                word[0:i]
+        """)
+
+        with self.assertAddedMessage("memoryview-over-bytes"):
+            self.walk(test_func)
+    
+    def test_byte_slice_as_arg(self):
+        test_func = astroid.extract_node("""
+        def test(arg1: bytes): #@
+            for i in range(10):
+                arg1[0:i]
+        """)
+
+        with self.assertAddedMessage("memoryview-over-bytes"):
+            self.walk(test_func)
+            
