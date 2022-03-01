@@ -1,9 +1,10 @@
 # perflint
+
 ![PyPI](https://img.shields.io/pypi/v/perflint)
 
 pylint extension for performance anti patterns
 
-very much a work-in-progress!
+This project is an early beta. It will likely raise many false-positives in your code.
 
 ## Installation
 
