@@ -15,7 +15,10 @@ def get_children_recursive(node: nodes.NodeNG):
         yield from get_children_recursive(child)
 
 
-def local_type(name: nodes.Name) -> Union[None, nodes.Name]:
+def local_type(name: nodes.NodeNG) -> Union[None, nodes.Name]:
+    if not isinstance(name, nodes.Name):
+        return
+
     if name.name in name.frame().locals:
         vals = name.frame().locals[name.name]
         if len(vals) > 0:
@@ -129,6 +132,11 @@ class LoopInvariantChecker(BaseChecker):
             'memoryview-over-bytes',
             'Avoid using byte slicing in loops.'
         ),
+        'W8205': (
+            'Importing the "%s" name directly is more efficient in this loop.',
+            'dotted-import-in-loop',
+            'Dotted global names in loops are inefficient.'
+        ),
     }
 
     def __init__(self, linter=None):
@@ -180,7 +188,7 @@ class LoopInvariantChecker(BaseChecker):
                     for child in get_children_recursive(cur_node):
                         if isinstance(child, nodes.Name) and child.name in assigned_names:
                             is_variant = True
-                    if not is_variant and not isinstance(cur_node, nodes.Keyword):
+                    if not is_variant and not isinstance(cur_node, (nodes.Attribute, nodes.Keyword)):
                         invariant_node = cur_node
                         cur_node = cur_node.parent
                     else:
@@ -250,3 +258,13 @@ class LoopInvariantChecker(BaseChecker):
                 self.add_message("memoryview-over-bytes", node=node)
         if isinstance(inferred_value, nodes.Const) and isinstance(inferred_value.value, bytes):
             self.add_message("memoryview-over-bytes", node=node)
+
+    @checker_utils.check_messages('dotted-import-in-loop')
+    def visit_attribute(self, node: nodes.Attribute) -> None:
+        if self._loop_level == 0:
+            return
+        inferred_value = safe_infer(node.expr)
+        if inferred_value and isinstance(inferred_value, nodes.Module):
+            if isinstance(node.parent, nodes.Attribute):  # TODO: Go higher in the chain
+                self.add_message("dotted-import-in-loop", node=node.parent, args=(node.parent.attrname,))
+            self.add_message("dotted-import-in-loop", node=node, args=(node.attrname,))

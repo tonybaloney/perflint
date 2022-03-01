@@ -107,4 +107,25 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
 
         with self.assertAddedMessage("memoryview-over-bytes"):
             self.walk(test_func)
-            
+        
+    def test_dotted_name_in_loop(self):
+        test_func = astroid.extract_node("""
+        import os
+        def test(): #@
+            for item in items:
+                os.environ[item]
+        """)
+
+        with self.assertAddedMessage("dotted-import-in-loop"):
+            self.walk(test_func)
+    
+    def test_worse_dotted_name_in_loop(self):
+        test_func = astroid.extract_node("""
+        import os
+        def test(): #@
+            for item in items:
+                os.path.exists(item)
+        """)
+
+        with self.assertAddedMessage("dotted-import-in-loop"):
+            self.walk(test_func)

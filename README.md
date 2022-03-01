@@ -205,3 +205,21 @@ def memoryview_slice():
 ```
 
 `memoryview_slice()` is 30-40% faster than `bytes_slice()`
+
+### W8205 : Importing the "%s" name directly is more efficient in this loop. (`dotted-import-in-loop`)
+
+In Python you can import a module and then access submodules as attributes. You can also access functions as attributes of that module. This keeps your import statements minimal, however, if you use this method in a loop it is inefficient because each loop iteration it will load global, load attribute and then load method. Because the name isn't an object, "load method" falls back to load attribute via a slow internal path.
+
+Importing the desired function directly is 10-15% faster:
+
+```python
+import os  # NOQA
+
+def test_dotted_import(items):
+    for item in items:
+        val = os.environ[item]  # Use `from os import environ`
+
+def even_worse_dotted_import(items):
+    for item in items:
+        val = os.path.exists(item) # Use `from os.path import exists` instead
+```
