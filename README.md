@@ -1,6 +1,6 @@
 # perflint
 
-![PyPI](https://img.shields.io/pypi/v/perflint)
+[![PyPI](https://img.shields.io/pypi/v/perflint)](https://pypi.org/project/perflint/)
 
 pylint extension for performance anti patterns
 
