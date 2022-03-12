@@ -154,6 +154,8 @@ class LoopInvariantChecker(BaseChecker):
             self._loop_assignments.append(set(el.name for el in node.target.elts))
         elif isinstance(node.target, nodes.AssignName):
             self._loop_assignments.append({node.target.name})
+        else:
+            self._loop_assignments.append(set())
         self._loop_names.append([])
         self._ignore.append(node.iter)
 

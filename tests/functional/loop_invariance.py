@@ -1,3 +1,6 @@
+import os
+
+
 def foo(x):
     pass
 
@@ -155,7 +158,6 @@ def loop_invariant_statement_but_name_while():
     for _ in range(10_000):
         i  # [loop-invariant-statement]
 
-import os  # NOQA
 
 def test_dotted_import(items):
     for item in items:
@@ -164,3 +166,19 @@ def test_dotted_import(items):
 def even_worse_dotted_import(items):
     for item in items:
         val = os.path.exists(item)
+
+
+def loop_invariance_in_self_assignment():
+    class Foo:
+        n = 1
+
+        def loop(self):
+            i = 4
+            for self.n in range(4):
+                print(self.n)
+                len(i)  # [loop-invariance]
+
+    def test(): #@
+        f = Foo()
+        f.loop()
+    test()
