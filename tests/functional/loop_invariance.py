@@ -1,3 +1,6 @@
+import os
+
+
 def foo(x):
     pass
 
@@ -155,7 +158,6 @@ def loop_invariant_statement_but_name_while():
     for _ in range(10_000):
         i  # [loop-invariant-statement]
 
-import os  # NOQA
 
 def test_dotted_import(items):
     for item in items:

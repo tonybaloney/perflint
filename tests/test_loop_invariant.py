@@ -118,7 +118,7 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
 
         with self.assertAddedMessage("dotted-import-in-loop"):
             self.walk(test_func)
-    
+
     def test_worse_dotted_name_in_loop(self):
         test_func = astroid.extract_node("""
         import os
