@@ -8,13 +8,13 @@ This project is an early beta. It will likely raise many false-positives in your
 
 ## Installation
 
-```
+```console
 pip install perflint
 ```
 
 ## Usage
 
-```
+```console
 pylint your_code/ --load-plugins=perflint
 ```
 
@@ -80,7 +80,6 @@ def loop_invariant_statement():
         print(n * i)  # [loop-invariant-statement]
 ```
 
-
 The loop-invariance checker will underline expressions and subexpressions within the body using the same rules:
 
 ```python
@@ -128,7 +127,7 @@ def loop_invariant_branching():
 
 Functions can have side-effects (print is a good example), so the loop-invariant scanner may give some false-positives.
 
-It will also highlight dotted expresions, e.g. attribute lookups. This may seem noisy, but in some cases this is valid, e.g. 
+It will also highlight dotted expresions, e.g. attribute lookups. This may seem noisy, but in some cases this is valid, e.g.
 
 ```python
 from os.path import exists
@@ -177,10 +176,9 @@ def copy_dict_key_to_fast():
 
 `copy_dict_key_to_fast()` executes 65% faster than `dont_copy_dict_key_to_fast()`
 
-
 ### R8203 : Try..except blocks have a significant overhead. Avoid using them inside a loop (`loop-try-except-usage`).
 
-Up to Python 3.10, `try...except` blocks are computationally expensive compared with `if` statements. 
+Up to Python 3.10, `try...except` blocks are computationally expensive compared with `if` statements.
 
 Avoid using them in a loop as they can cause significant overheads. Refactor your code to not require iteration specific details and put the entire loop in the body of a `try` block.
 
