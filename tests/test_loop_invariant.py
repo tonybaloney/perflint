@@ -86,6 +86,37 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
         with self.assertAddedMessage("loop-invariant-global-usage"):
             self.walk(test_func)
 
+    def test_assigned_global_in_for_loop(self):
+        test_func = astroid.extract_node("""
+        glbl = 1
+
+        def test(): #@
+            items = (1,2,3,4)
+
+            for glbl in list(items):
+                glbl
+        """)
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+
+    def test_self_assignment_for_loop(self):
+        test_func = astroid.extract_node("""
+        class Foo:
+            n = 1
+
+            def loop(self):
+                for self.n in range(4):
+                    print(self.n)
+        
+        def test(): #@
+            f = Foo()
+            f.loop()
+        """)
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+
     def test_byte_slice(self):
         test_func = astroid.extract_node("""
         def test(): #@
