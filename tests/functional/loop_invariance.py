@@ -182,3 +182,22 @@ def loop_invariance_in_self_assignment():
         f = Foo()
         f.loop()
     test()
+
+ 
+def invariant_fstrings():
+    i = 1
+    for n in range(2):
+        print(f"{i}")  # [loop-invariance]
+        print(f"{n}")
+        print(f"{i} + {n}")
+        print(f"{n} + {i}")
+
+def invariant_literals():
+    i = 1
+    for n in range(2):
+        d = {"x": i}  # [loop-invariance]
+        d2 = {"x": i, "j": n}
+        d3 = {"j": n}
+
+    for n in range(2):
+        print("x" + "g" + "g")
