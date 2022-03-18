@@ -160,3 +160,25 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
 
         with self.assertAddedMessage("dotted-import-in-loop"):
             self.walk(test_func)
+
+    def test_variant_f_string_in_loop(self):
+        test_func = astroid.extract_node("""
+        def test(): #@
+            n = 0
+            for i in range(2):
+                print(f"{n} {i}")
+        """)
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+
+    def test_invariant_f_string_in_loop(self):
+        test_func = astroid.extract_node("""
+        def test(): #@
+            i = 2
+            for _ in range(2):
+                print(f"{i}")
+        """)
+
+        with self.assertAddedMessage("loop-invariant-statement"):
+            self.walk(test_func)

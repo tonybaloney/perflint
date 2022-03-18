@@ -18,9 +18,26 @@ pip install perflint
 pylint your_code/ --load-plugins=perflint
 ```
 
+### VS Code
+
+Add these configuration properties to your `.vscode/settings.json` file (create if it doesn't exist):
+
+```javascript
+{
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.pylintArgs": [
+        "--load-plugins",
+        "perflint",
+        "--rcfile",
+        "${workspaceFolder}/.pylintrc"
+    ],
+}
+```
+
 ## Rules
 
-### W8101 : Unnessecary `list()` on already iterable type
+### W8101 : Unnecessary `list()` on already iterable type (`unnecessary-list-cast`)
 
 Using a `list()` call to eagerly iterate over an already iterable type is inefficient as a second list iterator is created, after first iterating the value:
 
@@ -32,7 +49,7 @@ def simple_static_tuple():
         print(i)
 ```
 
-### W8102: Incorrect iterator method for dictionary
+### W8102: Incorrect iterator method for dictionary (`incorrect-dictionary-iterator`)
 
 Python dictionaries store keys and values in two separate tables. They can be individually iterated. Using `.items()` and discarding either the key or the value using `_` is inefficient, when `.keys()` or `.values()` can be used instead:
 
@@ -53,7 +70,7 @@ def simple_dict_keys():
 
 ### W8201: Loop invariant statement (`loop-invariant-statement`)
 
-The body of loops will be inspected to determine statements, or expressions where the result is constant (invariant) for each iteration of a loop. This is based on named variables which are not modified during each iteration. 
+The body of loops will be inspected to determine statements, or expressions where the result is constant (invariant) for each iteration of a loop. This is based on named variables which are not modified during each iteration.
 
 For example:
 
