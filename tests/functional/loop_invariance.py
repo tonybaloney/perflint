@@ -50,7 +50,7 @@ def loop_invariant_branching():
         if len(x) > 2:   # [loop-invariant-statement]
             print(x * j)
 
-
+ 
 
 def loop_invariant_statement_side_effect_function():
     """Catch basic loop-invariant function call."""
