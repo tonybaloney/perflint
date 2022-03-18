@@ -92,7 +92,7 @@ def loop_invariant_statement_while():
 
 def loop_invariant_statement_more_complex_while():
     """Catch basic loop-invariant function call."""
-    x = [1,2,3,4]
+    x = [1, 2, 3, 4]
     i = 6
     j = 0
     while j < 100:
@@ -176,18 +176,18 @@ def loop_invariance_in_self_assignment():
             i = 4
             for self.n in range(4):
                 print(self.n)
-                len(i)  # [loop-invariance]
+                len(i)  # [loop-invariant-statement]
 
     def test(): #@
         f = Foo()
         f.loop()
     test()
 
- 
+
 def invariant_fstrings():
     i = 1
     for n in range(2):
-        print(f"{i}")  # [loop-invariance]
+        print(f"{i}")  # [loop-invariant-statement]
         print(f"{n}")
         print(f"{i} + {n}")
         print(f"{n} + {i}")
@@ -195,9 +195,12 @@ def invariant_fstrings():
 def invariant_literals():
     i = 1
     for n in range(2):
-        d = {"x": i}  # [loop-invariance]
+        d = {"x": i}  # [loop-invariant-statement]
         d2 = {"x": i, "j": n}
         d3 = {"j": n}
 
     for n in range(2):
-        print("x" + "g" + "g")
+        print("x" * n)
+ 
+    for n in range(2):
+        print("x" * i)  # [loop-invariant-statement]

@@ -144,6 +144,7 @@ class LoopInvariantChecker(BaseChecker):
         self._loop_level = 0
         self._loop_assignments: List[Set[str]] = []
         self._loop_names: List[List[nodes.Name]] = []
+        self._loop_consts: List[List[nodes.Const]] = []
         self._ignore: List[nodes.NodeNG] = []
 
     @checker_utils.check_messages("loop-invariant-statement")
@@ -157,6 +158,7 @@ class LoopInvariantChecker(BaseChecker):
         else:
             self._loop_assignments.append(set())
         self._loop_names.append([])
+        self._loop_consts.append([])
         self._ignore.append(node.iter)
 
     @checker_utils.check_messages("loop-invariant-statement")
@@ -164,6 +166,7 @@ class LoopInvariantChecker(BaseChecker):
         """Visit while loop bodies."""
         self._loop_level += 1
         self._loop_names.append([])
+        self._loop_consts.append([])
         self._loop_assignments.append(set())
         self._ignore.append(node.test)
 
@@ -179,26 +182,27 @@ class LoopInvariantChecker(BaseChecker):
         """Drop loop level."""
         self._loop_level -= 1
         assigned_names = self._loop_assignments.pop()
-        used_names = self._loop_names.pop()
-        for name_node in used_names:
-            if name_node.name not in assigned_names:
-                cur_node = name_node.parent
-                invariant_node = None
-                while cur_node != node:
-                    # Walk down parent for variant components.
-                    is_variant = False
-                    for child in get_children_recursive(cur_node):
-                        if isinstance(child, nodes.Name) and child.name in assigned_names:
-                            is_variant = True
-                    if not is_variant and not isinstance(cur_node, (nodes.Attribute, nodes.Keyword)):
-                        invariant_node = cur_node
-                        cur_node = cur_node.parent
-                    else:
-                        break
+        unassigned_names = [name_node for name_node in self._loop_names.pop() if name_node.name not in assigned_names]
+        used_consts = self._loop_consts.pop()
+        FRAGMENT_NODE_TYPES = (nodes.FormattedValue,)
 
-                if invariant_node and invariant_node not in self._ignore:
-                    self.add_message("loop-invariant-statement", node=invariant_node)
+        for name_node in unassigned_names:
+            cur_node = name_node.parent
+            invariant_node = None
+            while cur_node != node:
+                # Walk down parent for variant components.
+                is_variant = False
+                for child in get_children_recursive(cur_node):
+                    if isinstance(child, nodes.Name) and child.name in assigned_names:
+                        is_variant = True
+                if not is_variant and not isinstance(cur_node, (nodes.Attribute, nodes.Keyword)):
+                    invariant_node = cur_node
+                    cur_node = cur_node.parent
+                else:
+                    break
 
+            if invariant_node and invariant_node not in self._ignore and not isinstance(invariant_node, FRAGMENT_NODE_TYPES):
+                self.add_message("loop-invariant-statement", node=invariant_node)
 
     def visit_assign(self, node: nodes.Assign) -> None:
         """Track assignments in loops."""
@@ -234,6 +238,12 @@ class LoopInvariantChecker(BaseChecker):
         if node.name in scope.globals and len(scope.globals[node.name]) > 0 and isinstance(scope.globals[node.name][0], nodes.AssignName):
             if self._loop_level > 0:
                 self.add_message("loop-invariant-global-usage", node=node)
+
+    def visit_const(self, node: nodes.Const) -> None:
+        if self._loop_level == 0:
+            return
+        if self._loop_consts:
+            self._loop_consts[-1].append(node)
 
     def visit_call(self, node: nodes.Call) -> None:
         """Look for method calls."""
