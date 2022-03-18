@@ -183,7 +183,7 @@ class LoopInvariantChecker(BaseChecker):
         self._loop_level -= 1
         assigned_names = self._loop_assignments.pop()
         unassigned_names = [name_node for name_node in self._loop_names.pop() if name_node.name not in assigned_names]
-        used_consts = self._loop_consts.pop()
+        used_consts = self._loop_consts.pop()  # TODO: Iterate consts as well
         FRAGMENT_NODE_TYPES = (nodes.FormattedValue,)
 
         for name_node in unassigned_names:
