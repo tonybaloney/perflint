@@ -48,7 +48,7 @@ def loop_invariant_branching():
     # Marks comparator, but not print
     for j in range(10_000):
         if len(x) > 2:   # [loop-invariant-statement]
-            print(x * j) # [loop-invariant-statement]
+            print(x * j)
 
 
 
@@ -87,7 +87,7 @@ def loop_invariant_statement_while():
         # so this expression should be evaluated outside
         print(len(x) * i) # [loop-invariant-statement]
         y = x[0] + x[1] # [loop-invariant-statement]
-        foo(x=x) # [loop-invariant-statement]
+        foo(x=x)
 
 
 def loop_invariant_statement_more_complex_while():
@@ -130,7 +130,7 @@ def loop_invariant_branching_while():
         if len(x) > 2:   # [loop-invariant-statement]
             print(x * j) # [loop-invariant-statement]
 
-
+ 
 
 def loop_invariant_statement_side_effect_function_while():
     """Catch basic loop-invariant function call."""
@@ -182,7 +182,7 @@ def loop_invariance_in_self_assignment():
         f = Foo()
         f.loop()
     test()
-
+ 
 
 def invariant_fstrings():
     i = 1

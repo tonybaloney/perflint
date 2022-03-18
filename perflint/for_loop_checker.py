@@ -184,7 +184,7 @@ class LoopInvariantChecker(BaseChecker):
         assigned_names = self._loop_assignments.pop()
         unassigned_names = [name_node for name_node in self._loop_names.pop() if name_node.name not in assigned_names]
         used_consts = self._loop_consts.pop()  # TODO: Iterate consts as well
-        FRAGMENT_NODE_TYPES = (nodes.FormattedValue,)
+        FRAGMENT_NODE_TYPES = (nodes.FormattedValue, nodes.Attribute, nodes.Keyword)
 
         for name_node in unassigned_names:
             cur_node = name_node.parent
@@ -192,10 +192,12 @@ class LoopInvariantChecker(BaseChecker):
             while cur_node != node:
                 # Walk down parent for variant components.
                 is_variant = False
+                if isinstance(cur_node, nodes.Call) and isinstance(cur_node.func, nodes.Name) and cur_node.func in unassigned_names:
+                    is_variant = True
                 for child in get_children_recursive(cur_node):
                     if isinstance(child, nodes.Name) and child.name in assigned_names:
                         is_variant = True
-                if not is_variant and not isinstance(cur_node, (nodes.Attribute, nodes.Keyword)):
+                if not is_variant:
                     invariant_node = cur_node
                     cur_node = cur_node.parent
                 else:
