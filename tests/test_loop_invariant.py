@@ -56,7 +56,7 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
                 foo(arg=i)
         """)
 
-        with self.assertAddedMessage("loop-invariant-statement"):
+        with self.assertNoMessages():
             self.walk(test_node)
 
     def test_basic_loop_variant_by_method(self):
@@ -181,4 +181,17 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
         """)
 
         with self.assertAddedMessage("loop-invariant-statement"):
+            self.walk(test_func)
+
+    def test_call_side_effect(self):
+        test_func = astroid.extract_node("""
+        class Foo:
+            pass
+
+        def test(): #@
+            for n in range(1):
+                Foo()
+        """)
+
+        with self.assertNoMessages():
             self.walk(test_func)
