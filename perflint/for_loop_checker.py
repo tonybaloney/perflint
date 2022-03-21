@@ -1,4 +1,4 @@
-from typing import List, Set, Union
+from typing import Dict, List, Set, Union
 from astroid import nodes
 from astroid.helpers import safe_infer
 from pylint.checkers import BaseChecker
@@ -184,22 +184,32 @@ class LoopInvariantChecker(BaseChecker):
         assigned_names = self._loop_assignments.pop()
         unassigned_names = [name_node for name_node in self._loop_names.pop() if name_node.name not in assigned_names]
         used_consts = self._loop_consts.pop()
-        FRAGMENT_NODE_TYPES = (nodes.FormattedValue, nodes.Attribute, nodes.Keyword)
+        FRAGMENT_NODE_TYPES = (nodes.FormattedValue, nodes.Attribute, nodes.Keyword, nodes.Slice, nodes.UnaryOp)
+        NAME_NODES = (nodes.Name, nodes.AssignName)
+        SIDE_EFFECT_NODES = (nodes.Yield, nodes.YieldFrom, nodes.Return, nodes.Raise)
 
+        visited_nodes: Dict[nodes.NodeNG, bool] = dict()
         for name_node in [*unassigned_names, *used_consts]:
             cur_node = name_node.parent
             invariant_node = None
             while cur_node != node:
                 # Walk down parent for variant components.
                 is_variant = False
-                if isinstance(cur_node, nodes.Call) and isinstance(cur_node.func, nodes.Name):
-                    if cur_node.func in unassigned_names:
+                if cur_node in visited_nodes:
+                    is_variant = visited_nodes[cur_node]
+                else:
+                    if isinstance(cur_node, nodes.Call) and isinstance(cur_node.func, nodes.Name):
+                        if cur_node.func in unassigned_names:
+                            is_variant = True
+                        elif cur_node.func.name == 'print':  # Treat print() as a side-effect
+                            is_variant = True
+                    elif isinstance(cur_node, SIDE_EFFECT_NODES):
                         is_variant = True
-                    elif cur_node.func.name == 'print':  # Treat print() as a side-effect
-                        is_variant = True
-                for child in get_children_recursive(cur_node):
-                    if isinstance(child, (nodes.Name, nodes.AssignName)) and child.name in assigned_names:
-                        is_variant = True
+                    if not is_variant:
+                        for child in get_children_recursive(cur_node):
+                            if isinstance(child, NAME_NODES) and child.name in assigned_names:
+                                is_variant = True
+                    visited_nodes[cur_node] = is_variant
                 if not is_variant:
                     invariant_node = cur_node
                     cur_node = cur_node.parent

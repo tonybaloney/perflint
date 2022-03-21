@@ -205,3 +205,40 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
 
         with self.assertNoMessages():
             self.walk(test_func)
+    
+    def test_slice_fragment(self):
+        test_func = astroid.extract_node("""
+        def test(): #@
+            for n in range(1):
+                x = None
+        """)
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+    
+    def test_index_fragment(self):
+        test_func = astroid.extract_node("""
+        def test(): #@
+            fruits = ["apple", "banana", "pear"]
+            for fruit in fruits:
+                print(fruit)
+                _ = fruit[1:]
+                _ = fruit[-1]
+                _ = fruit[::-1] 
+        """)
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+    
+
+    def test_return(self):
+        test_func = astroid.extract_node("""
+        def test(): #@
+            fruits = ["apple", "banana", "pear"]
+            for _ in fruits:
+                return fruits
+        """)
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+    

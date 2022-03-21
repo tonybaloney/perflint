@@ -18,6 +18,12 @@ pip install perflint
 pylint your_code/ --load-plugins=perflint
 ```
 
+You can run all the rules and no other pylint rules:
+
+```console
+pylint . --disable=all --enable=loop-invariant-statement,dotted-import-in-loop,loop-invariant-global-usage,loop-try-except-usage,memoryview-over-bytes,unnecessary-list-cast,incorrect-dictionary-iterator --load-plugins=perflint
+```
+
 ### VS Code
 
 Add these configuration properties to your `.vscode/settings.json` file (create if it doesn't exist):

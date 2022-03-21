@@ -216,3 +216,18 @@ def invariant_consts():
         len((1,2,3,4))  # [loop-invariant-statement]
         max((1,2,3,4))  # [loop-invariant-statement]
         type(None)  # [loop-invariant-statement]
+
+def invariant_slices(): #@
+    l = (1,2,3,4)
+    for n in range(1):
+        _ = l[1:2]  # [loop-invariant-statement]
+        _ = l[n:3]
+        _ = l[1]   # [loop-invariant-statement]
+
+def variant_slices(): #@
+    fruits = ["apple", "banana", "pear"]
+    for fruit in fruits:
+        print(fruit)
+        _ = fruit[1:]
+        _ = fruit[-1]
+        _ = fruit[::-1] 
