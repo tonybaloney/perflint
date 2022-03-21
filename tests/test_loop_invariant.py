@@ -195,3 +195,13 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
 
         with self.assertNoMessages():
             self.walk(test_func)
+    
+    def test_assign_const(self):
+        test_func = astroid.extract_node("""
+        def test(): #@
+            for n in range(1):
+                x = None
+        """)
+
+        with self.assertNoMessages():
+            self.walk(test_func)

@@ -50,7 +50,7 @@ def loop_invariant_branching():
         if len(x) > 2:   # [loop-invariant-statement]
             print(x * j)
 
-
+ 
 
 def loop_invariant_statement_side_effect_function():
     """Catch basic loop-invariant function call."""
@@ -128,9 +128,8 @@ def loop_invariant_branching_while():
     while j < 10_000:
         j += 1
         if len(x) > 2:   # [loop-invariant-statement]
-            print(x * j) # [loop-invariant-statement]
+            print(x * j)
 
- 
 
 def loop_invariant_statement_side_effect_function_while():
     """Catch basic loop-invariant function call."""
@@ -201,6 +200,19 @@ def invariant_literals():
 
     for n in range(2):
         print("x" * n)
- 
+
     for n in range(2):
         print("x" * i)  # [loop-invariant-statement]
+
+def invariant_iteration_sub(): #@
+    items = (1,2,3,4)
+
+    for _ in items:
+        x = print("There are ", len(items), "items")  # [loop-invariant-statement]
+
+def invariant_consts():
+    for _ in range(4):
+        len("BANANANANANAN")  # [loop-invariant-statement]
+        len((1,2,3,4))  # [loop-invariant-statement]
+        max((1,2,3,4))  # [loop-invariant-statement]
+        type(None)  # [loop-invariant-statement]
