@@ -4,7 +4,7 @@ import perflint.list_checker
 from base import BaseCheckerTestCase
 
 
-class TestUniqueReturnChecker(BaseCheckerTestCase):
+class TestListMutationChecker(BaseCheckerTestCase):
     CHECKER_CLASS = perflint.list_checker.ListChecker
 
     def test_const_list_should_be_tuple(self):
@@ -31,6 +31,26 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
         def test(): #@
             items = [1,2,3,4]
             items[0] = 0
+        """)
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+
+    def test_mutated_global_list_by_index(self):
+        test_func = astroid.extract_node("""
+        items = [1,2,3,4]
+        def test(): #@
+            items[0] = 0
+        """)
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+    
+    def test_mutated_global_list_by_method(self):
+        test_func = astroid.extract_node("""
+        items = [1,2,3,4]
+        def test(): #@
+            items.append(5)
         """)
 
         with self.assertNoMessages():
