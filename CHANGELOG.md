@@ -1,5 +1,9 @@
 # Changes
 
+## 0.5.0 (25th March 2022)
+
+* Added a check for non-mutated lists where a tuple would be more efficient (W8301)
+
 ## 0.4.1 (21st March 2022)
 
 * (BUG) No longer raises unary operators against const values

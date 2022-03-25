@@ -244,3 +244,25 @@ def even_worse_dotted_import(items):
     for item in items:
         val = os.path.exists(item) # Use `from os.path import exists` instead
 ```
+
+### W8301 : Use tuple instead of list for a non-mutated sequence. (`use-tuple-over-list`)
+
+Constructing a tuple is faster than a list and indexing tuples is faster. When the sequence is not mutated, then a tuple should be used instead:
+
+```python
+def index_mutated_list():
+    fruit = ["banana", "pear", "orange"]
+    fruit[2] = "mandarin"
+    len(fruit)
+    for i in fruit:
+        print(i)
+
+def index_non_mutated_list():
+    fruit = ["banana", "pear", "orange"]  # Raises [use-tuple-over-list]
+    print(fruit[2])
+    len(fruit)
+    for i in fruit:
+        print(i)
+```
+
+Mutation is determined by subscript assignment, slice assignment, or methods called on the list.
