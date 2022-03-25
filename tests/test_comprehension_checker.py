@@ -35,3 +35,32 @@ class TestComprehensionChecker(BaseCheckerTestCase):
 
         with self.assertAddedMessage("use-list-copy"):
             self.walk(test_func)
+
+    def test_simple_dict_assignment(self):
+        test_func = astroid.extract_node(
+            """
+        def test(): #@
+            result = {}
+            fruit = ["apple", "pear", "orange"]
+            for idx, name in enumerate(fruit):
+                result[idx] = name
+        """
+        )
+
+        with self.assertAddedMessage("use-dict-comprehension"):
+            self.walk(test_func)
+
+    def test_filtered_dict_assignment(self):
+        test_func = astroid.extract_node(
+            """
+        def test(): #@
+            result = {}
+            fruit = ["apple", "pear", "orange"]
+            for idx, name in enumerate(fruit):
+                if idx % 2:
+                    result[idx] = name
+        """
+        )
+
+        with self.assertAddedMessage("use-dict-comprehension"):
+            self.walk(test_func)
