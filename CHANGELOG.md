@@ -1,5 +1,9 @@
 # Changes
 
+## 0.5.1 (25th March 2022)
+
+* Marks global lists which are mutated in local scopes
+
 ## 0.5.0 (25th March 2022)
 
 * Added a check for non-mutated lists where a tuple would be more efficient (W8301)

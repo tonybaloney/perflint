@@ -7,7 +7,7 @@ from perflint.list_checker import ListChecker
 if TYPE_CHECKING:
     from pylint.lint import PyLinter
 
-__version__ = "0.5.0"
+__version__ = "0.5.1"
 
 
 def register(linter: "PyLinter") -> None:
