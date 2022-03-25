@@ -1,5 +1,9 @@
 # Changes
 
+## 0.6.0 (25th March 2022)
+
+* Added checks for list and dictionary comprehensions as faster alternatives to loops
+
 ## 0.5.1 (25th March 2022)
 
 * Marks global lists which are mutated in local scopes

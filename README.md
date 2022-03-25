@@ -266,3 +266,49 @@ def index_non_mutated_list():
 ```
 
 Mutation is determined by subscript assignment, slice assignment, or methods called on the list.
+
+### W8401 : Use a list comprehension instead of a for-loop (`use-list-comprehension`)
+
+List comprehensions are 25% more efficient at creating new lists, with or without an if-statement:
+
+```python
+def should_be_a_list_comprehension_filtered():
+    """A List comprehension would be more efficient."""
+    original = range(10_000)
+    filtered = []
+    for i in original:
+        if i % 2:
+            filtered.append(i)
+```
+
+### W8402 : Use a list copy instead of a for-loop (`use-list-copy`)
+
+Use either the `list()` constructor or `list.copy()` to copy a list, not another for loop:
+
+```python
+def should_be_a_list_copy():
+    """Using the copy() method would be more efficient."""
+    original = range(10_000)
+    filtered = []
+    for i in original:
+        filtered.append(i)
+```
+
+### W8403 : Use a dictionary comprehension instead of a for-loop (`use-dict-comprehension`)
+
+Dictionary comprehensions should be used in simple loops to construct dictionaries:
+
+```python
+def should_be_a_dict_comprehension():
+    pairs = (("a", 1), ("b", 2))
+    result = {}
+    for x, y in pairs:
+        result[x] = y
+
+def should_be_a_dict_comprehension_filtered():
+    pairs = (("a", 1), ("b", 2))
+    result = {}
+    for x, y in pairs:
+        if y % 2:
+            result[x] = y
+```
