@@ -123,7 +123,7 @@ class LoopInvariantChecker(BaseChecker):
             'Global name lookups in Python are slower than local names.'
         ),
         'R8203': (
-            'Try..except blocks have a significant overhead. Avoid using them inside a loop.',
+            'Try..except blocks have an overhead. Avoid using them inside a loop unless you\'re using them for control-flow.',
             'loop-try-except-usage',
             'Avoid using try..except within a loop.'
         ),
