@@ -2,7 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/perflint)](https://pypi.org/project/perflint/)
 
-pylint extension for performance anti patterns
+A Linter for performance anti-patterns
 
 This project is an early beta. It will likely raise many false-positives in your code.
 
@@ -14,14 +14,16 @@ pip install perflint
 
 ## Usage
 
+Perflint can be used as a standalone linter:
+
 ```console
-pylint your_code/ --load-plugins=perflint
+perflint your_code/
 ```
 
-You can run all the rules and no other pylint rules:
+Or as a `pylint` linter plugin:
 
 ```console
-pylint . --disable=all --enable=loop-invariant-statement,dotted-import-in-loop,loop-invariant-global-usage,loop-try-except-usage,memoryview-over-bytes,unnecessary-list-cast,incorrect-dictionary-iterator --load-plugins=perflint
+pylint your_code/ --load-plugins=perflint
 ```
 
 ### VS Code
