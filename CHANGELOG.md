@@ -1,5 +1,9 @@
 # Changes
 
+## 0.7.0 (28th March 2022)
+
+* Added a standalone entry point (`perflint`)
+
 ## 0.6.0 (25th March 2022)
 
 * Added checks for list and dictionary comprehensions as faster alternatives to loops
