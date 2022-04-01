@@ -16,10 +16,12 @@ rules = (
     + list(ComprehensionChecker.msgs.keys())
 )
 
-args = sys.argv[1:]
+args = []
 args.append("--load-plugins=perflint")
 args.append("--disable=all")
 args.append("--enable={0}".format(",".join(rules)))
+args.extend(sys.argv[1:])
+
 try:
     PylintRun(args)
 except KeyboardInterrupt:
