@@ -3,6 +3,7 @@
 ## 0.8.0 (main)
 
 * Bugfix: No longer suggests list comprehensions when the if statement has an elif/else clause
+* Bugfix: Pylint enable/disable arguments are allowed on the `perflint` CLI entry point
 
 ## 0.7.0 (28th March 2022)
 
