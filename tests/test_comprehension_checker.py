@@ -22,6 +22,25 @@ class TestComprehensionChecker(BaseCheckerTestCase):
         with self.assertAddedMessage("use-list-comprehension"):
             self.walk(test_func)
 
+    def test_complex_list_filter(self):
+        test_func = astroid.extract_node(
+            """
+        def test(): #@
+            items = [1,2,3,4]
+            result = []
+            for i in items:
+                if i % 2:
+                    result.append(i)
+                elif i % 2:
+                    result.append(i)
+                else:
+                    result.append(i)
+        """
+        )
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+
     def test_simple_list_copy(self):
         test_func = astroid.extract_node(
             """
@@ -63,4 +82,40 @@ class TestComprehensionChecker(BaseCheckerTestCase):
         )
 
         with self.assertAddedMessage("use-dict-comprehension"):
+            self.walk(test_func)
+
+    def test_complex_filtered_dict_assignment(self):
+        test_func = astroid.extract_node(
+            """
+        def test(): #@
+            result = {}
+            fruit = ["apple", "pear", "orange"]
+            for idx, name in enumerate(fruit):
+                if idx % 2:
+                    result[idx] = name
+                elif idx % 3:
+                    result[idx] = name
+                else:
+                    result[idx] = name
+        """
+        )
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+
+    def test_complex_filtered_dict_assignment2(self):
+        test_func = astroid.extract_node(
+            """
+        def test(): #@
+            result = {}
+            fruit = ["apple", "pear", "orange"]
+            for idx, name in enumerate(fruit):
+                if idx % 2:
+                    result[idx] = name
+                else:
+                    result[idx] = name
+        """
+        )
+
+        with self.assertNoMessages():
             self.walk(test_func)
