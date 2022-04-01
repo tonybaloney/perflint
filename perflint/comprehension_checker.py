@@ -41,7 +41,8 @@ class ComprehensionChecker(BaseChecker):
     def leave_for(self, node: nodes.For):
         if len(node.body) != 1:
             return
-        if isinstance(node.body[0], nodes.If):
+        if isinstance(node.body[0], nodes.If) and not node.body[0].orelse:
+            # TODO : Support a simple, single else statement
             if isinstance(node.body[0].body[0], nodes.Expr):
                 if not isinstance(node.body[0].body[0].value, nodes.Call):
                     return

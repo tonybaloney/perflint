@@ -1,5 +1,9 @@
 # Changes
 
+## 0.8.0 (main)
+
+* Bugfix: No longer suggests list comprehensions when the if statement has an elif/else clause
+
 ## 0.7.0 (28th March 2022)
 
 * Added a standalone entry point (`perflint`)
