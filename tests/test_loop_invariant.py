@@ -279,15 +279,32 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
         with self.assertNoMessages():
             self.walk(test_func)
 
-    # TODO : Fix constant checks
-    # def test_constants(self):
-    #     test_func = astroid.extract_node(
-    #         """
-    #     def test(): #@
-    #         for _ in fruits:
-    #             fruits = ["apple", "banana", "pear"]
-    #     """
-    #     )
+    def test_constants(self):
+        test_func = astroid.extract_node(
+            """
+        def test(): #@
+            for _ in fruits:
+                fruits = ["apple", "banana", "pear"]
+                fruits_tuple = ("apple", "banana", "pear")
+                _ = []
+                _ = [1, 2, 3]
+                _ = ()
+                _ = (1, 2, 3)
+        """
+        )
 
-    #     with self.assertNoMessages():
-    #         self.walk(test_func)
+        with self.assertNoMessages():
+            self.walk(test_func)
+
+    def test_constant_dictionaries(self):
+        test_func = astroid.extract_node(
+            """
+        def test(): #@
+            for _ in fruits:
+                _ = {}
+                fruits = {0: 1, 1: 2}
+        """
+        )
+
+        with self.assertNoMessages():
+            self.walk(test_func)
