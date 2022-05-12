@@ -193,6 +193,27 @@ class LoopInvariantChecker(BaseChecker):
         self._loop_assignments.append(set())
         self._ignore.append(node.test)
 
+    def _visit_sequence(self, node: Union[nodes.List, nodes.Tuple]) -> None:
+        if not node.elts:
+            self._ignore.append(node)
+        elif all(isinstance(e, nodes.Const) for e in node.elts):
+            self._ignore.append(node)
+
+    def visit_list(self, node: nodes.List) -> None:
+        self._visit_sequence(node)
+
+    def visit_tuple(self, node: nodes.Tuple) -> None:
+        self._visit_sequence(node)
+
+    def visit_dict(self, node: nodes.Dict) -> None:
+        if not node.items:
+            self._ignore.append(node)
+        elif all(
+            isinstance(k, nodes.Const) and isinstance(v, nodes.Const)
+            for k, v in node.items
+        ):
+            self._ignore.append(node)
+
     @checker_utils.check_messages("loop-invariant-statement")
     def leave_for(self, node: nodes.For) -> None:
         self._leave_loop(node)

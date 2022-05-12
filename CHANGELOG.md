@@ -4,6 +4,7 @@
 
 * Renamed the global usage in loop to `loop-global-usage`
 * Added support for invariant f-strings
+* Bugfix: Doesn't highlight list, tuple or dict with only constant values as being invariant
 
 ## 0.7.1 (1st April 2022)
 
