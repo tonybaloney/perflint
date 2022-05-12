@@ -106,7 +106,7 @@ def loop_invariant_statement():
         print(n * i)  # [loop-invariant-statement]
 ```
 
-The loop-invariance checker will underline expressions and subexpressions within the body using the same rules:
+The loop-invariance checker will underline expressions and sub-expressions within the body using the same rules:
 
 ```python
 def loop_invariant_statement_more_complex():
@@ -153,7 +153,7 @@ def loop_invariant_branching():
 
 Functions can have side-effects (print is a good example), so the loop-invariant scanner may give some false-positives.
 
-It will also highlight dotted expresions, e.g. attribute lookups. This may seem noisy, but in some cases this is valid, e.g.
+It will also highlight dotted expressions, e.g. attribute lookups. This may seem noisy, but in some cases this is valid, e.g.
 
 ```python
 from os.path import exists
@@ -170,9 +170,9 @@ def direct_import():
 
 `direct_import()` is 10-15% faster than `dotted_import()` because it doesn't need to load the `os` global, the `path` attribute and the `exists` method for each iteration.
 
-### W8202: Global name usage in a loop (`loop-invariant-global-usage`)
+### W8202: Global name usage in a loop (`loop-global-usage`)
 
-Loading globals is slower than loading "fast" local variables. The difference is marginal, but when propagated in a loop, there can be a noticable speed improvement, e.g.:
+Loading globals is slower than loading "fast" local variables. The difference is marginal, but when propagated in a loop, there can be a noticeable speed improvement, e.g.:
 
 ```python
 d = {
