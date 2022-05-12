@@ -260,3 +260,17 @@ def constant_expressions():
         _ = (0, 1, 2)
         _ = [0, 1, 2]
         _ = {"a": 1, "b": 2}
+
+
+def variant_f_string():
+    x = 1
+
+    for n in range(10):
+        result = len(f"I'm not sure about {x} {n}")
+
+
+def invariant_f_string():
+    x = 1
+
+    for n in range(10):
+        result = len(f"I'm not sure about {x}")
