@@ -1,6 +1,7 @@
 # perflint
 
 [![PyPI](https://img.shields.io/pypi/v/perflint)](https://pypi.org/project/perflint/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/perflint)](https://pypi.org/project/perflint/)
 
 A Linter for performance anti-patterns
 
