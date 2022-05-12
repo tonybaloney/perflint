@@ -1,5 +1,10 @@
 # Changes
 
+## 0.7.2 (12th May 2022)
+
+* Renamed the global usage in loop to `loop-global-usage`
+* Added support for invariant f-strings
+
 ## 0.7.1 (1st April 2022)
 
 * Bugfix: No longer suggests list comprehensions when the if statement has an elif/else clause
