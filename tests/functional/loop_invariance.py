@@ -1,4 +1,17 @@
+""" Test loop invariance """
 import os
+
+
+def cook(item):
+    ...
+
+
+def cook_pies():
+    pies = ("🥧", "🥧", "🥧", "🥧", "🥧", "🥧", "🥧")
+
+    for i, pie in enumerate(pies):
+        print("Cooking", i, "of", len(pies))
+        cook(pie)
 
 
 def foo(x):
@@ -12,18 +25,18 @@ def loop_invariant_statement():
     for i in range(10_000):
         # x is never changed in this loop scope,
         # so this expression should be evaluated outside
-        print(len(x) * i)  # [loop-invariant-statement]
+        print(len(x) * i)
 
 
 def loop_invariant_statement_more_complex():
     """Catch basic loop-invariant function call."""
-    x = [1, 2, 3, 4]
+    x = (1, 2, 3, 4)
     i = 6
 
     for j in range(10_000):
-        # x is never changed in this loop scope,
+        # x and i are never changed in this loop scope,
         # so this expression should be evaluated outside
-        print(len(x) * i + j)  # [loop-invariant-statement]
+        print(len(x) * i + j)
 
 
 def loop_invariant_statement_method_side_effect():
@@ -43,12 +56,12 @@ def loop_invariant_branching():
 
     for j in range(10_000):
         # Marks entire branch
-        if len(x) > 2:  # [loop-invariant-statement]
-            print(x * i)  # [loop-invariant-statement]
+        if len(x) > 2:
+            print(x * i)
 
     # Marks comparator, but not print
     for j in range(10_000):
-        if len(x) > 2:  # [loop-invariant-statement]
+        if len(x) > 2:
             print(x * j)
 
 
@@ -86,9 +99,9 @@ def loop_invariant_statement_while():
         i += 1
         # x is never changed in this loop scope,
         # so this expression should be evaluated outside
-        print(len(x) * i)  # [loop-invariant-statement]
-        y = x[0] + x[1]  # [loop-invariant-statement]
-        foo(x=x)
+        print(len(x) * i)
+        y = x[0] + x[1]
+        foo(x=y)
 
 
 def loop_invariant_statement_more_complex_while():
@@ -99,7 +112,7 @@ def loop_invariant_statement_more_complex_while():
     while j < 100:
         # x is never changed in this loop scope,
         # so this expression should be evaluated outside
-        print(len(x) * i + j)  # [loop-invariant-statement]
+        print(len(x) * i + j)
 
 
 def loop_invariant_statement_method_side_effect_while():
@@ -121,14 +134,14 @@ def loop_invariant_branching_while():
     while j < 10_000:
         j += 1
         # Marks entire branch
-        if len(x) > 2:  # [loop-invariant-statement]
-            print(x * i)  # [loop-invariant-statement]
+        if len(x) > 2:
+            print(x * i)
 
     # Marks comparator, but not print
     j = 0
     while j < 10_000:
         j += 1
-        if len(x) > 2:  # [loop-invariant-statement]
+        if len(x) > 2:
             print(x * j)
 
 
@@ -147,7 +160,7 @@ def loop_invariant_statement_side_effect_function_while():
         j += 1
         # x is never changed in this loop scope,
         # so this expression should be evaluated outside
-        print(len(x) + j)  # [loop-invariant-statement]
+        print(len(x) + j)
 
     len = _len
 
@@ -157,7 +170,7 @@ def loop_invariant_statement_but_name_while():
     i = 6
 
     for _ in range(10_000):
-        i  # [loop-invariant-statement]
+        i
 
 
 def test_dotted_import(items):
@@ -178,7 +191,7 @@ def loop_invariance_in_self_assignment():
             i = 4
             for self.n in range(4):
                 print(self.n)
-                len(i)  # [loop-invariant-statement]
+                len(i)
 
     def test():  # @
         f = Foo()
@@ -190,7 +203,7 @@ def loop_invariance_in_self_assignment():
 def invariant_fstrings():
     i = 1
     for n in range(2):
-        print(f"{i}")  # [loop-invariant-statement]
+        print(f"{i}")
         print(f"{n}")
         print(f"{i} + {n}")
         print(f"{n} + {i}")
@@ -199,7 +212,7 @@ def invariant_fstrings():
 def invariant_literals():
     i = 1
     for n in range(2):
-        d = {"x": i}  # [loop-invariant-statement]
+        d = {"x": i}
         d2 = {"x": i, "j": n}
         d3 = {"j": n}
 
@@ -207,30 +220,30 @@ def invariant_literals():
         print("x" * n)
 
     for n in range(2):
-        print("x" * i)  # [loop-invariant-statement]
+        print("x" * i)
 
 
 def invariant_iteration_sub():  # @
     items = (1, 2, 3, 4)
 
     for _ in items:
-        x = print("There are ", len(items), "items")  # [loop-invariant-statement]
+        x = print("There are ", len(items), "items")
 
 
 def invariant_consts():
     for _ in range(4):
-        len("BANANANANANAN")  # [loop-invariant-statement]
-        len((1, 2, 3, 4))  # [loop-invariant-statement]
-        max((1, 2, 3, 4))  # [loop-invariant-statement]
-        type(None)  # [loop-invariant-statement]
+        len("BANANANANANAN")
+        len((1, 2, 3, 4))
+        max((1, 2, 3, 4))
+        type(None)
 
 
 def invariant_slices():  # @
     l = (1, 2, 3, 4)
     for n in range(1):
-        _ = l[1:2]  # [loop-invariant-statement]
+        _ = l[1:2]
         _ = l[n:3]
-        _ = l[1]  # [loop-invariant-statement]
+        _ = l[1]
 
 
 def variant_slices():  # @
@@ -240,3 +253,10 @@ def variant_slices():  # @
         _ = fruit[1:]
         _ = fruit[-1]
         _ = fruit[::-1]
+
+
+def constant_expressions():
+    for i in range(10):
+        _ = (0, 1, 2)
+        _ = [0, 1, 2]
+        _ = {"a": 1, "b": 2}

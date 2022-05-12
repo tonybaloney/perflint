@@ -4,7 +4,7 @@ def mutated_list():
 
 
 def non_mutated_list():
-    fruit = ["banana", "pear", "orange"]  # [use-tuple-over-list]
+    fruit = ["banana", "pear", "orange"]
     len(fruit)
     for i in fruit:
         print(i)
@@ -19,9 +19,8 @@ def index_mutated_list():
 
 
 def index_non_mutated_list():
-    fruit = ["banana", "pear", "orange"]  # [use-tuple-over-list]
+    fruit = ["banana", "pear", "orange"]
     print(fruit[2])
-    len(fruit)
     for i in fruit:
         print(i)
 
