@@ -1,0 +1,7 @@
+-   id: perflint
+    name: perflint
+    description: '`perflint` is a command-line utility for checking performance anti-patterns.'
+    entry: perflint
+    language: python
+    types: [python]
+    require_serial: true
