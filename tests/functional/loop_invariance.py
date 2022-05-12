@@ -272,5 +272,5 @@ def variant_f_string():
 def invariant_f_string():
     x = 1
 
-    for n in range(10):
+    for _ in range(10):
         result = len(f"I'm not sure about {x}")

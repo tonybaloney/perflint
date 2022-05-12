@@ -212,6 +212,7 @@ class LoopInvariantChecker(BaseChecker):
         ]
         used_consts = self._loop_consts.pop()
         FRAGMENT_NODE_TYPES = (
+            nodes.FormattedValue,
             nodes.Attribute,
             nodes.Keyword,
             nodes.Slice,
