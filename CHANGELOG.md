@@ -1,5 +1,9 @@
 # Changes
 
+## 0.7.3 (16th May 2022)
+
+* Fixes a regression bug in the loop invariant name
+
 ## 0.7.2 (12th May 2022)
 
 * Renamed the global usage in loop to `loop-global-usage`
