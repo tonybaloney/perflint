@@ -95,7 +95,7 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
         """
         )
 
-        with self.assertAddedMessage("loop-invariant-global-usage"):
+        with self.assertAddedMessage("loop-global-usage"):
             self.walk(test_func)
 
     def test_assigned_global_in_for_loop(self):

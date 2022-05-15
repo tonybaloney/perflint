@@ -303,7 +303,7 @@ class LoopInvariantChecker(BaseChecker):
         if isinstance(node.target, nodes.AssignName):
             self._loop_assignments[-1].add(node.target.name)
 
-    @checker_utils.check_messages("loop-invariant-global-usage")
+    @checker_utils.check_messages("loop-global-usage")
     def visit_name(self, node: nodes.Name) -> None:
         """Look for global names"""
         if self._loop_names:
@@ -321,7 +321,7 @@ class LoopInvariantChecker(BaseChecker):
             and isinstance(scope.globals[node.name][0], nodes.AssignName)
         ):
             if self._loop_level > 0:
-                self.add_message("loop-invariant-global-usage", node=node)
+                self.add_message("loop-global-usage", node=node)
 
     def visit_const(self, node: nodes.Const) -> None:
         if self._loop_level == 0:
