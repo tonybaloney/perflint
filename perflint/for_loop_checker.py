@@ -3,7 +3,6 @@ from astroid import nodes
 from astroid.helpers import safe_infer
 from pylint.checkers import BaseChecker
 from pylint.checkers import utils as checker_utils
-from pylint.interfaces import IAstroidChecker
 
 iterable_types = (
     nodes.Tuple,
@@ -52,8 +51,6 @@ class ForLoopChecker(BaseChecker):
     Check for poor for-loop usage.
     """
 
-    __implements__ = IAstroidChecker
-
     name = "for-loop-checker"
     priority = -1
     msgs = {
@@ -69,7 +66,7 @@ class ForLoopChecker(BaseChecker):
         ),
     }
 
-    @checker_utils.check_messages(
+    @checker_utils.only_required_for_messages(
         "unnecessary-list-cast", "incorrect-dictionary-iterator"
     )
     def visit_for(self, node: nodes.For) -> None:
@@ -130,8 +127,6 @@ class LoopInvariantChecker(BaseChecker):
     Check for poor for-loop usage.
     """
 
-    __implements__ = IAstroidChecker
-
     name = "loop-invariant-checker"
     priority = -1
     msgs = {
@@ -170,7 +165,7 @@ class LoopInvariantChecker(BaseChecker):
         self._loop_consts: List[List[nodes.Const]] = []
         self._ignore: List[nodes.NodeNG] = []
 
-    @checker_utils.check_messages("loop-invariant-statement")
+    @checker_utils.only_required_for_messages("loop-invariant-statement")
     def visit_for(self, node: nodes.For) -> None:
         """Visit for loop bodies."""
         self._loop_level += 1
@@ -184,7 +179,7 @@ class LoopInvariantChecker(BaseChecker):
         self._loop_consts.append([])
         self._ignore.append(node.iter)
 
-    @checker_utils.check_messages("loop-invariant-statement")
+    @checker_utils.only_required_for_messages("loop-invariant-statement")
     def visit_while(self, node: nodes.While) -> None:
         """Visit while loop bodies."""
         self._loop_level += 1
@@ -214,11 +209,11 @@ class LoopInvariantChecker(BaseChecker):
         ):
             self._ignore.append(node)
 
-    @checker_utils.check_messages("loop-invariant-statement")
+    @checker_utils.only_required_for_messages("loop-invariant-statement")
     def leave_for(self, node: nodes.For) -> None:
         self._leave_loop(node)
 
-    @checker_utils.check_messages("loop-invariant-statement")
+    @checker_utils.only_required_for_messages("loop-invariant-statement")
     def leave_while(self, node: nodes.While) -> None:
         self._leave_loop(node)
 
@@ -303,7 +298,7 @@ class LoopInvariantChecker(BaseChecker):
         if isinstance(node.target, nodes.AssignName):
             self._loop_assignments[-1].add(node.target.name)
 
-    @checker_utils.check_messages("loop-global-usage")
+    @checker_utils.only_required_for_messages("loop-global-usage")
     def visit_name(self, node: nodes.Name) -> None:
         """Look for global names"""
         if self._loop_names:
@@ -338,12 +333,12 @@ class LoopInvariantChecker(BaseChecker):
         if isinstance(node.func.expr, nodes.Name):
             self._loop_assignments[-1].add(node.func.expr.name)
 
-    @checker_utils.check_messages("loop-try-except-usage")
-    def visit_tryexcept(self, node: nodes.TryExcept) -> None:
+    @checker_utils.only_required_for_messages("loop-try-except-usage")
+    def visit_tryexcept(self, node: nodes.Try) -> None:
         if self._loop_level > 0:
             self.add_message("loop-try-except-usage", node=node)
 
-    @checker_utils.check_messages("memoryview-over-bytes")
+    @checker_utils.only_required_for_messages("memoryview-over-bytes")
     def visit_subscript(self, node: nodes.Subscript) -> None:
         if self._loop_level == 0:
             return
@@ -360,7 +355,7 @@ class LoopInvariantChecker(BaseChecker):
         ):
             self.add_message("memoryview-over-bytes", node=node)
 
-    @checker_utils.check_messages("dotted-import-in-loop")
+    @checker_utils.only_required_for_messages("dotted-import-in-loop")
     def visit_attribute(self, node: nodes.Attribute) -> None:
         if self._loop_level == 0:
             return
