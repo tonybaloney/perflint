@@ -1,5 +1,13 @@
 # Changes
 
+## 0.8.0 (10th January 2024)
+
+* fix: pre-commit configuration filename by @adamantike in https://github.com/tonybaloney/perflint/pull/32
+* Test other versions of Python in CI by @tonybaloney in https://github.com/tonybaloney/perflint/pull/33
+* Migrate to pylint v3 by @jenstroeger in https://github.com/tonybaloney/perflint/pull/46
+* Drop support for Python 3.7
+* Add support for Python 3.12
+
 ## 0.7.3 (16th May 2022)
 
 * Fixes a regression bug in the loop invariant name
