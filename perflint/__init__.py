@@ -8,7 +8,7 @@ from perflint.comprehension_checker import ComprehensionChecker
 if TYPE_CHECKING:
     from pylint.lint import PyLinter
 
-__version__ = "0.8.0"
+__version__ = "0.8.1"
 
 
 def register(linter: "PyLinter") -> None:

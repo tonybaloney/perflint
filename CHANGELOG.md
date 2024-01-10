@@ -1,5 +1,10 @@
 # Changes
 
+## 0.8.1 (11th January 2024)
+
+* Don't recommend `__all__` be a tuple by @tonybaloney in https://github.com/tonybaloney/perflint/pull/49
+* Add clarity to the try in a loop rule by @tonybaloney in https://github.com/tonybaloney/perflint/pull/48
+
 ## 0.8.0 (10th January 2024)
 
 * fix: pre-commit configuration filename by @adamantike in https://github.com/tonybaloney/perflint/pull/32
