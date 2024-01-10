@@ -3,6 +3,8 @@ from astroid import nodes
 from astroid.helpers import safe_infer
 from pylint.checkers import BaseChecker
 from pylint.checkers import utils as checker_utils
+from pylint.interfaces import INFERENCE
+
 
 iterable_types = (
     nodes.Tuple,
@@ -141,7 +143,7 @@ class LoopInvariantChecker(BaseChecker):
             "Global name lookups in Python are slower than local names.",
         ),
         "R8203": (
-            "Try..except blocks have an overhead. Avoid using them inside a loop unless you're using them for control-flow.",
+            "Try..except blocks have an overhead. Avoid using them inside a loop unless you're using them for control-flow. Rule only applies to Python < 3.11.",
             "loop-try-except-usage",
             "Avoid using try..except within a loop.",
         ),
@@ -336,7 +338,7 @@ class LoopInvariantChecker(BaseChecker):
     @checker_utils.only_required_for_messages("loop-try-except-usage")
     def visit_tryexcept(self, node: nodes.Try) -> None:
         if self._loop_level > 0:
-            self.add_message("loop-try-except-usage", node=node)
+            self.add_message("loop-try-except-usage", node=node, confidence=INFERENCE)
 
     @checker_utils.only_required_for_messages("memoryview-over-bytes")
     def visit_subscript(self, node: nodes.Subscript) -> None:
