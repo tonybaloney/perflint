@@ -308,3 +308,16 @@ class TestUniqueReturnChecker(BaseCheckerTestCase):
 
         with self.assertNoMessages():
             self.walk(test_func)
+
+    def test_constant_sets(self):
+        test_func = astroid.extract_node(
+            """
+        def test(): #@
+            for _ in fruits:
+                _ = set()
+                fruits = {1, 2}
+        """
+        )
+
+        with self.assertNoMessages():
+            self.walk(test_func)
