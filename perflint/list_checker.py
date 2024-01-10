@@ -2,15 +2,12 @@ from typing import Dict, List
 from astroid import nodes
 from pylint.checkers import BaseChecker
 from pylint.checkers import utils as checker_utils
-from pylint.interfaces import IAstroidChecker
 
 
 class ListChecker(BaseChecker):
     """
     Check for inefficient list usage
     """
-
-    __implements__ = IAstroidChecker
 
     name = 'list-checker'
     priority = -1
@@ -42,14 +39,14 @@ class ListChecker(BaseChecker):
         for _assignment in _lists.values():
             self.add_message("use-tuple-over-list", node=_assignment.parent.value)
 
-    @checker_utils.check_messages("use-tuple-over-list")
+    @checker_utils.only_required_for_messages("use-tuple-over-list")
     def leave_module(self, node: nodes.Module):
         self._raise_for_scope()
 
     def visit_functiondef(self, node: nodes.FunctionDef):
         self._lists_to_watch.append({})
 
-    @checker_utils.check_messages("use-tuple-over-list")
+    @checker_utils.only_required_for_messages("use-tuple-over-list")
     def leave_functiondef(self, node: nodes.FunctionDef):
         self._raise_for_scope()
 
