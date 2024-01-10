@@ -9,6 +9,7 @@ readme = "README.md"
 classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["version", "description"]
 dependencies = ["pylint >=3.0.0,<4.0.0"]
+requires-python = ">=3.8"
 
 [project.urls]
 Home = "https://github.com/tonybaloney/perflint"
