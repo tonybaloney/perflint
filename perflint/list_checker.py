@@ -29,6 +29,8 @@ class ListChecker(BaseChecker):
         if len(node.targets) > 1:
             return
         if isinstance(node.targets[0], nodes.AssignName):
+            if node.targets[0].name == "__all__":
+                return
             self._lists_to_watch[-1][node.targets[0].name] = node.targets[0]
 
     def visit_module(self, node: nodes.Module):
