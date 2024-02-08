@@ -20,9 +20,9 @@ jobs:
         os: ["macos-11", ubuntu-20.04, "windows-latest"]
         python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Setup python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python_version }}
         architecture: x64
