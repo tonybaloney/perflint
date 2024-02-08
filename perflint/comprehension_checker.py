@@ -1,7 +1,7 @@
 from astroid import nodes
 from pylint.checkers import BaseChecker
 from pylint.checkers import utils as checker_utils
-from astroid.helpers import safe_infer
+from astroid.util import safe_infer
 
 
 class ComprehensionChecker(BaseChecker):

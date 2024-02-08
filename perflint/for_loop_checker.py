@@ -1,6 +1,6 @@
 from typing import Dict, List, Set, Union
 from astroid import nodes
-from astroid.helpers import safe_infer
+from astroid.util import safe_infer
 from pylint.checkers import BaseChecker
 from pylint.checkers import utils as checker_utils
 from pylint.interfaces import INFERENCE
