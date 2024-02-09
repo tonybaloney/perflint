@@ -5,6 +5,7 @@ import sys
 from perflint.for_loop_checker import ForLoopChecker, LoopInvariantChecker
 from perflint.list_checker import ListChecker
 from perflint.comprehension_checker import ComprehensionChecker
+from perflint.logging_checker import LoggingChecker
 
 
 pylint.modify_sys_path()
@@ -14,6 +15,7 @@ rules = (
     + list(LoopInvariantChecker.msgs.keys())
     + list(ListChecker.msgs.keys())
     + list(ComprehensionChecker.msgs.keys())
+    + list(LoggingChecker.msgs.keys())
 )
 
 args = []

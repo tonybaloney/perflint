@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from perflint.for_loop_checker import ForLoopChecker, LoopInvariantChecker
 from perflint.list_checker import ListChecker
 from perflint.comprehension_checker import ComprehensionChecker
+from perflint.logging_checker import LoggingChecker
 
 if TYPE_CHECKING:
     from pylint.lint import PyLinter
@@ -21,3 +22,4 @@ def register(linter: "PyLinter") -> None:
     linter.register_checker(LoopInvariantChecker(linter))
     linter.register_checker(ListChecker(linter))
     linter.register_checker(ComprehensionChecker(linter))
+    linter.register_checker(LoggingChecker(linter))
