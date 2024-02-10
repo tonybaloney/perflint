@@ -315,3 +315,31 @@ def should_be_a_dict_comprehension_filtered():
         if y % 2:
             result[x] = y
 ```
+
+### W8501 : Delegate message string formatting to the logger (`use-logger-formatting`)
+
+Log message string formatting should be delegated to the logging framework. This way the string formatting will not be performed if the particular logging level is not enabled.
+
+```python
+import logging
+import time
+
+class Foo:
+    def __init__(self, value: int):
+        self.value = value
+
+    def __str__(self):
+        print(f"Calling Foo expensive __str__ on Foo with value {self.value}")
+        time.sleep(0.25)
+        return f"My value is: {self.value}"
+
+def eager_formatting():
+    foo = Foo(1)
+    # Expensive Foo.__str__ will be called even though logging.DEBUG level is not enabled.
+    logging.debug("The value of `foo` is %s" % foo)
+
+def lazy_formatting():
+    foo = Foo(1)
+    # Expensive Foo.__str__ will not be called since logging.DEBUG level is not enabled.
+    logging.debug("The value of `foo` is %s", foo)
+```
