@@ -10,7 +10,6 @@ class ComprehensionChecker(BaseChecker):
     """
 
     name = "comprehension-checker"
-    priority = -1
     msgs = {
         "W8401": (
             "Use a list comprehension instead of a for-loop",

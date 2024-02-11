@@ -54,7 +54,6 @@ class ForLoopChecker(BaseChecker):
     """
 
     name = "for-loop-checker"
-    priority = -1
     msgs = {
         "W8101": (
             "Unnecessary using of list() on an already iterable type.",
@@ -130,7 +129,6 @@ class LoopInvariantChecker(BaseChecker):
     """
 
     name = "loop-invariant-checker"
-    priority = -1
     msgs = {
         "W8201": (
             "Consider moving this expression outside of the loop.",
