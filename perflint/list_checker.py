@@ -10,7 +10,6 @@ class ListChecker(BaseChecker):
     """
 
     name = 'list-checker'
-    priority = -1
     msgs = {
         'W8301': (
             'Use tuple instead of list for a non-mutated sequence',
