@@ -119,3 +119,71 @@ class TestComprehensionChecker(BaseCheckerTestCase):
 
         with self.assertNoMessages():
             self.walk(test_func)
+
+    def test_str_join_on_gen_exp(self):
+        test_func = astroid.extract_node(
+            """
+        def test():
+            return " ".join(str(i) for i in range(10))
+        """
+        )
+
+        with self.assertAddedMessage("use-list-comprehension-str-join"):
+            self.walk(test_func)
+
+    def test_str_join_on_parenthesized_gen_exp(self):
+        test_func = astroid.extract_node(
+            """
+        def test():
+            return " ".join((str(i) for i in range(10)))
+        """
+        )
+
+        with self.assertAddedMessage("use-list-comprehension-str-join"):
+            self.walk(test_func)
+
+    def test_str_join_parenthesized_string_on_gen_exp(self):
+        test_func = astroid.extract_node(
+            """
+        def test():
+            return (" ").join(str(i) for i in range(10))
+        """
+        )
+
+        with self.assertAddedMessage("use-list-comprehension-str-join"):
+            self.walk(test_func)
+
+    def test_str_join_parenthesized_concatenated_string_on_gen_exp(self):
+        test_func = astroid.extract_node(
+            """
+        def test():
+            return (" " + "-" + " ").join(str(i) for i in range(10))
+        """
+        )
+
+        with self.assertAddedMessage("use-list-comprehension-str-join"):
+            self.walk(test_func)
+
+    def test_str_join_fstring_on_gen_exp(self):
+        test_func = astroid.extract_node(
+            """
+        def test():
+            sep = " "
+            return f"{sep}".join(str(i) for i in range(10))
+        """
+        )
+
+        with self.assertAddedMessage("use-list-comprehension-str-join"):
+            self.walk(test_func)
+
+    def test_str_join_local_var_on_gen_exp(self):
+        test_func = astroid.extract_node(
+            """
+        def test():
+            space_join = " ".join
+            return space_join(str(i) for i in range(10))
+        """
+        )
+
+        with self.assertAddedMessage("use-list-comprehension-str-join"):
+            self.walk(test_func)

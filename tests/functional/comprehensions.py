@@ -49,3 +49,8 @@ def should_not_be_a_list_comprehension(args):
         else:
             res.append(type(arg[0]).__getitem__(arg[0], _eval_args(arg[1:])))
     return tuple(res)
+
+
+def should_use_list_comprehension():
+    words = ["foo", "bar", "baz"]
+    return " ".join(word.title() for word in words)
