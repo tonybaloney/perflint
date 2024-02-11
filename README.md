@@ -315,3 +315,13 @@ def should_be_a_dict_comprehension_filtered():
         if y % 2:
             result[x] = y
 ```
+
+### W8404 : Pass a list comprehension to str.join instead of a generator expression (`use-list-comprehension-str-join`)
+
+Passing a list comprehension instead of a generator expression to `str.join` is more efficient since `str.join` converts the iterable parameter to a list anyway, since it needs to iterate over it multiple times:
+
+```python
+def should_use_list_comprehension():
+    words = ["foo", "bar", "baz"]
+    return " ".join(word.title() for word in words)
+```
