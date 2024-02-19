@@ -73,7 +73,7 @@ class ListChecker(BaseChecker):
             del self._lists_to_watch[0][_name.name]
 
     def visit_subscript(self, node: nodes.Subscript):
-        if not isinstance(node.parent, nodes.Assign):
+        if not isinstance(node.parent, (nodes.Assign, nodes.Delete)):
             return
         if not isinstance(node.value, nodes.Name):
             return

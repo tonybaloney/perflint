@@ -45,6 +45,16 @@ class TestListMutationChecker(BaseCheckerTestCase):
         with self.assertNoMessages():
             self.walk(test_func)
 
+    def test_mutated_list_by_del(self):
+        test_func = astroid.extract_node("""
+        def test():
+            items = [1,2,3,4]
+            del items[0]
+        """)
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+
     def test_mutated_global_list_by_index(self):
         test_func = astroid.extract_node("""
         items = [1,2,3,4]
@@ -60,6 +70,16 @@ class TestListMutationChecker(BaseCheckerTestCase):
         items = [1,2,3,4]
         def test(): #@
             items.append(5)
+        """)
+
+        with self.assertNoMessages():
+            self.walk(test_func)
+
+    def test_mutated_global_list_by_del(self):
+        test_func = astroid.extract_node("""
+        items = [1,2,3,4]
+        def test():
+            del items[0]
         """)
 
         with self.assertNoMessages():
