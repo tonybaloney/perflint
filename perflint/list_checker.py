@@ -58,7 +58,9 @@ class ListChecker(BaseChecker):
             return
         if not isinstance(node.func.expr, nodes.Name):
             return
-        # TODO : Filter from non-mutation methods
+        # Ignore calls to non-mutating methods.
+        if node.func.attrname in ("copy", "count", "index"):
+            return
         self._mark_mutated(node.func.expr)
 
     def _mark_mutated(self, _name: nodes.Name):

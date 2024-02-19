@@ -16,6 +16,16 @@ class TestListMutationChecker(BaseCheckerTestCase):
         with self.assertAddedMessage("use-tuple-over-list"):
             self.walk(test_func)
 
+    def test_non_mutating_method_call_on_list_should_be_tuple(self):
+        test_func = astroid.extract_node("""
+        def test():
+            items = [1,2,3,4]
+            items.count(1)
+        """)
+
+        with self.assertAddedMessage("use-tuple-over-list"):
+            self.walk(test_func)
+
     def test_const_all_be_ignored(self):
         test_func = astroid.extract_node("""
         def test(): #@
